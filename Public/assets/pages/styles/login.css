@@ -1,0 +1,144 @@
+/***
+Login page
+***/
+.hy-page-login .hy-page-login {
+  background-color: #666 !important;
+}
+.hy-page-login .logo {
+  margin: 0 auto;
+  margin: 70px auto 50px auto;
+  text-align: center;
+}
+@media(min-width:480px){    
+    .hy-page-login .logo .login-img{
+        width:500px;
+        height:72px;
+        background: url(../img/login-title.png) no-repeat;
+        margin:0 auto;
+    }
+}
+.hy-page-login .content {
+  background: url(../img/bg-white-lock.png) repeat;
+  width: 360px;
+  margin: 0 auto;
+  margin-bottom: 0px;
+  padding: 30px;
+  padding-top: 20px;
+  padding-bottom: 15px;
+}
+.hy-page-login .content .form-title {
+  font-family:"Microsoft Yahei";
+  color: #fff;
+}
+.hy-page-login .content h4 {
+  color: #eee;
+}
+.hy-page-login .content p,
+.hy-page-login .content label {
+  color: #fff;
+}
+.hy-page-login .content .login-form,
+.hy-page-login .content .forget-form {
+  padding: 0px;
+  margin: 0px;
+}
+.hy-page-login .content .form-control {
+  background-color: #fff;
+}
+.hy-page-login .content .forget-form {
+  display: none;
+}
+.hy-page-login .content .register-form {
+  display: none;
+}
+.hy-page-login .content .form-title {
+  font-weight: 300;
+  margin-bottom: 25px;
+}
+.hy-page-login .content .form-actions {
+  background-color: transparent;
+  clear: both;
+  border: 0px;
+  padding: 0px 30px 25px 30px;
+  margin-left: -30px;
+  margin-right: -30px;
+}
+.hy-page-login .content .form-actions .checkbox {
+  margin-left: 0;
+  padding-left: 0;
+}
+.hy-page-login .content .forget-form .form-actions {
+  border: 0;
+  margin-bottom: 0;
+  padding-bottom: 20px;
+}
+.hy-page-login .content .register-form .form-actions {
+  border: 0;
+  margin-bottom: 0;
+  padding-bottom: 0px;
+}
+.hy-page-login .content .form-actions .checkbox {
+  margin-top: 8px;
+  display: inline-block;
+}
+.hy-page-login .content .form-actions .btn {
+  margin-top: 1px;
+}
+.hy-page-login .content .forget-password {
+  text-align:right;
+  border-top: 1px dotted #eee;
+  padding-top: 10px;
+}
+.hy-page-login .content .forget-password a{
+ color: #fff;
+}
+.hy-page-login .copyright {
+  text-align: center;
+  margin: 0 auto;
+  margin-top:30px;
+  padding: 10px;
+  color: #eee;
+  font-size: 14px;
+}
+
+@media (max-width: 480px) { 
+  .hy-page-login .pace .pace-progress {
+    height: 8px;
+  }
+  .hy-page-login{
+    background: url(../img/bg/phone.jpg) no-repeat;
+    background-size:cover;
+  }
+  .hy-page-login .logo {
+    margin: 10px auto 10px auto;
+  }
+
+  .hy-page-login .content {
+    padding: 10px 30px;
+    width: 250px;
+  }
+
+  .hy-page-login .content h3 {
+    font-size: 22px;
+  }
+
+  .hy-page-login .checkbox {
+    font-size: 13px;
+  }
+  
+  .hy-page-login .title-480{
+    color:#fff;
+    display:block !important;
+    font-family:"Microsoft Yahei";
+    font-size:26px;
+  }
+  
+  .hy-page-login .title-480 p{
+    font-family:"Microsoft Yahei";
+    font-size:20px;
+    line-height:40px;
+  }
+  .hy-page-login .copyright{
+    padding-bottom:100px;
+  }
+}

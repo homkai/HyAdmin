@@ -1,0 +1,56 @@
+<div id="hy-detail-wrapper" class="hy-detail-wrapper">
+	<php>if(1===count($data)) $col0=12;else $col0=6;</php>
+	<div class="row detail-tables">
+		<div class="col-md-{$col0}">
+			<volist name="data" id="v" mod="2">
+				<php>if(1===$mod) continue;</php>
+				<div class="portlet box {$v.style}">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa {$v.icon} fa-fw"></i><b class="title">{$v.title}</b>
+						</div>
+					</div>
+					<div class="portlet-body">
+					<foreach name="v['value']" item="v1" key="k1">					
+					<php>if(!$v1) continue; if($v['cols']) list($col1,$col2)=is_array($v['cols'])?$v['cols']:explode(',',$v['cols']); else { $col1=4;$col2=12-$col1; }</php>
+						<div class="row static-info">
+							<div class="col-xs-{$col1} name">{$k1}</div>
+							<div class="col-xs-{$col2} value">{$v1}</div>
+						</div>
+					</foreach>
+					</div>
+				</div>
+			</volist>
+		</div>
+		<div class="col-md-6">
+			<volist name="data" id="v" mod="2">
+				<php>if(0===$mod) continue;</php>
+				<div class="portlet box {$v.style}">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa {$v.icon} fa-fw"></i><b class="title">{$v.title}</b>
+						</div>
+					</div>
+					<div class="portlet-body">
+					<foreach name="v['value']" item="v1" key="k1">
+					<php>if(!$v1) continue; if($v['cols']) list($col1,$col2)=is_array($v['cols'])?$v['cols']:explode(',',$v['cols']); else { $col1=4;$col2=12-$col1; }</php>
+						<div class="row static-info">
+							<div class="col-xs-{$col1} name">{$k1}</div>
+							<div class="col-xs-{$col2} value">{$v1}</div>
+						</div>
+					</foreach>
+					</div>
+				</div>
+			</volist>
+		</div>
+	</div>
+</div>
+<div class="clearfix"></div>
+	<div class="table-responsive">
+		<div class="note note-warning display-none chart-tips"></div>
+		<div class="chart-container"></div>
+	</div>
+<div class="clearfix"></div>
+<script type="text/javascript">
+var hyJSONData=[{$data.json}] && [{$data.json}][0];
+</script>
