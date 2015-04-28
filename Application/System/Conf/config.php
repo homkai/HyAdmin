@@ -12,11 +12,13 @@ return array(
 			),
 			'PLUGINS'	=>	array(
 					'CSS'	=>	array(
-							'System/HyNotice/all'	=>	'umeditor/themes/default/css/umeditor.css',
+							'HyNotice/all'	=>	'umeditor/themes/default/css/umeditor.css',
 					),
 					'JS'	=>	array(
-							'System/HyNotice/all'	=>	'umeditor/umeditor.config.js',
-							'System/HyNotice/all'	=>	'umeditor/umeditor.min.js',
+							'HyNotice/all'	=>	array(
+									'umeditor/umeditor.config.js',
+									'umeditor/umeditor.min.js'
+							),
 					)
 			),
 			'PAGES'		=>	array(
@@ -24,8 +26,8 @@ return array(
 							
 					),
 					'JS'	=>	array(
-							'System/HyAlert/all'	=>	'hy-alert.js',
-							'System/HyAlertA2/all'	=>	'hy-alert.js',
+							'HyAlert/all'	=>	'hy-alert.js',
+							'HyAlertA2/all'	=>	'hy-alert.js',
 					)
 			)
 		),

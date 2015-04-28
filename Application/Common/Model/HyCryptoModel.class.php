@@ -1,6 +1,6 @@
 <?php
 namespace Common\Model;
-class HyAESModel{
+class HyCryptoModel{
 
 	/**
 	 * @var string Encryption key

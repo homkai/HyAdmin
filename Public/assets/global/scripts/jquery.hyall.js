@@ -8,10 +8,10 @@ jQuery.fn.hyall = function(config){
 	var dtColumns = []; // Datatables columns
 	var $dtContainer;
 	var $formValidator = {}; //表单验证JQ载体
-	var $allModal = {}; // HyAll 页面  modal JQ对象
+	var $formModal = {}; // HyAll 页面  modal JQ对象
 	var the = this; //全局对象
 		
-	this.ready = false;
+	this.initialized = false;
 	this.config = config,
 	this.allModalObservers = [],
 	this.detailModalObservers = [];
@@ -456,8 +456,8 @@ jQuery.fn.hyall = function(config){
      * 取得allModel jQ载体
      */
     this.getFormModal = function(){
-    	if($.isEmptyObject($allModal)) $allModal = $('.hy-form-modal', the);
-    	return $allModal;
+    	if($.isEmptyObject($formModal)) $formModal = $('.hy-form-modal', the);
+    	return $formModal;
     };
     /**
      * modal生成器
@@ -476,7 +476,7 @@ jQuery.fn.hyall = function(config){
 					action: ''
 				},
 				body: {
-					_base: '<div class="scroller no-scroller-xs form-inner" '+(the.isPhone ? 'data-height="320px"' : 'style="height:320px;" data-always-visible="1"')+'><div class="alert alert-info alert-tips display-none"><strong>操作提示：</strong><span></span></div>{:main}</div>',
+					_base: '<div class="scroller no-scroller-xs form-inner" '+($.isPhone ? 'data-height="320px"' : 'style="height:320px;" data-always-visible="1"')+'><div class="alert alert-info alert-tips display-none"><strong>操作提示：</strong><span></span></div>{:main}</div>',
 					main: ''
 				},
 				buttons: '<button type="button" data-dismiss="modal" class="btn default">取消</button><button type="submit" class="btn green submit">提交</button>'
@@ -487,7 +487,7 @@ jQuery.fn.hyall = function(config){
      * 初始化
      */
 	this.init = function(){
-		if(the.ready) return the;
+		if(the.initialized) return the;
 		// datatable start
 	    dt = new Datatable();
 		// dt-data init
@@ -587,11 +587,11 @@ jQuery.fn.hyall = function(config){
 	    // dt-bottom-actions init
 	    $dtContainer.on('click', '.dt-btm-actions .btn', function (e) {
             e.stopPropagation();
-            var $btn=$(this);
-            var handle=function($btn){
-	            var action=$btn.data('value');
-	            var max=$btn.data('max');
-			    var rows=dt.getSelectedRows();
+            var $btn = $(this);
+            var handle = function($btn){
+	            var action = $btn.data('value');
+	            var max = $btn.data('max');
+			    var rows = dt.getSelectedRows();
 			    if(!rows.length) return false;
 			    if(max>0 && rows.length>max) return false;
             	eval('the.actionsHandlers.action'+$.ucfirst(action)+'(rows,$modal,config.columns);');
@@ -614,14 +614,14 @@ jQuery.fn.hyall = function(config){
 		});
 	    // init hy-detail
 	    the.actionsHandlers.initDetail();
-	    the.ready = true;
+	    the.initialized = true;
 	    return the;
 	};
 	/**
 	 * 重新装载
 	 */
     this.reload = function(config){
-    	the.ready = false;
+    	the.initialized = false;
     	if(config) the.config = config;
     	the.init();
     };

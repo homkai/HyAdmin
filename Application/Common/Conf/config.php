@@ -28,7 +28,7 @@ return array_merge( $db = array(
 		
 	// SESSION 配置
 		// SESSION类型，如果改用文件存储此项留空：
-		'SESSION_TYPE'          =>  '',
+		'SESSION_TYPE'          =>  'DB',
 		'SESSION_TABLE'			=>	$db['DB_PREFIX'].'frame_session',
 		// 会话保持在线时长（秒）：
 		'SESSION_ONLINE'		=>	15,
@@ -53,7 +53,7 @@ return array_merge( $db = array(
 				//子目录创建方式，[0]-函数名，[1]-参数，多个参数使用数组：
 				'subName'  => array('date', 'Y-m-d'),
 				//保存根路径：
-				'rootPath' => './Uploads/', 
+				'rootPath' => './Public/uploads/', 
 				//上传文件命名规则，[0]-函数名，[1]-参数，多个参数使用数组：
 				'saveName' => array('uniqid', ''), 
 				//存在同名是否覆盖：

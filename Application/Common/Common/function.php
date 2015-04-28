@@ -9,49 +9,43 @@ date_default_timezone_set ( 'PRC' );
  * @return string
  */
 function to_time($time, $type = 1, $format='') {
-	if (! $time)
-		return "";
-	if ($format)
-		return date ( $format, $time );
+	if(!$time) return "";
+	if($format) return date($format, $time);
 	switch ($type) {
-		case 1 :
-			return date ( 'Y-m-d', $time );
-		case 2 :
-			return date ( 'Y-m-d H:i', $time );
+		case 1:
+			return date('Y-m-d', $time);
+		case 2:
+			return date('Y-m-d H:i', $time);
 		case 3:
-			if (date ( 'd', $time ) == date ( 'd' ))
-				return date ( '今天 H:i', $time );
-			return date ( 'Y-m-d H:i', $time );
-		case 4 :
-			if (date ( 'd', $time ) == date ( 'd' ))
-				$tmp = date ( '今天 h:i ', $time );
-			else
-				$tmp = date ( 'Y-m-d ', $time );
+			if(date('d', $time) == date('d'))
+				return date ( '今天 H:i', $time);
+			return date ( 'Y-m-d H:i', $time);
+		case 4:
+			$tmp = date('d', $time) == date('d') ? date('今天 h:i ', $time) : date ( 'Y-m-d ', $time );
 			$hour = date ( 'H', $time );
-			if ($hour < 5)
+			if($hour < 5)
 				$hour = "深夜";
-			elseif ($hour < 7)
-			$hour = "清晨";
-			elseif ($hour < 13)
-			$hour = "上午";
-			elseif ($hour < 19)
-			$hour = "下午";
+			elseif($hour < 7)
+				$hour = "清晨";
+			elseif($hour < 13)
+				$hour = "上午";
+			elseif($hour < 19)
+				$hour = "下午";
 			else
 				$hour = "晚上";
-			return $tmp . $hour . date ( ' g:i ', $time );
+			return $tmp. $hour . date (' g:i ', $time);
 		case 5:	
-			$count=time()-$time;
-			if($count<60){
+			$count = TIME - $time;
+			if($count < 60){
 				return '刚刚';
-			}elseif(($count/60)<60){
-				return (int)($count/60).'分钟前';
-			}elseif(($count/3600)<24){
-				return (int)($count/3600).'小时前';
-			}elseif(($count/3600/24)<3){
-				return (int)($count/86400).'天前';
-			}else{
-				return date('Y-m-d',$time);
+			}elseif(($count/60) < 60){
+				return intval($count/60).'分钟前';
+			}elseif(($count/3600) < 24){
+				return intval($count/3600).'小时前';
+			}elseif(($count/3600/24) < 3){
+				return intval($count/(3600*24)).'天前';
 			}
+			return date('Y-m-d',$time);
 	}
 }
 /**
@@ -60,9 +54,9 @@ function to_time($time, $type = 1, $format='') {
  * @return string
  */
 function token_builder($value=false){
-	session('hyToken',null);
-	$token=strtr(md5(rand(10000000, 99999999)),'ajfasw','homyit');
-	if($value) session($token,$value);
+	session('hyToken', null);
+	$token = strtr(md5(rand(10000000, 99999999)), 'ajfasw', 'homyit');
+	if($value) session($token, $value);
 	else session('hyToken',$token);
 	return $token;
 }
@@ -136,7 +130,6 @@ function u_parser($url='',$vars='') {
 				$var[$varController]   =   parse_name($var[$varController]);
 			}
 			$module =   '';
-
 			if(!empty($path)) {
 				$var[$varModule]    =   implode($depr,$path);
 			}else{
@@ -156,46 +149,57 @@ function u_parser($url='',$vars='') {
 	return array_merge($vars,$var);
 }
 /**
- * 二维数组取键值对
+ * 二维数组转关联数组
  * @param array $data
  * @param string $key
- * @param string|kvArr $value
+ * @param string|ascArr $value
  * @param string $key_postfix
- * @return boolean|kvArr
+ * @return ascArr
  */
-function md_arr_2_asc_arr($data=array(),$key='',$value='',$key_postfix=''){
+function md_arr_2_asc_arr($data=array(), $key='', $value='', $key_postfix=''){
 	if(!$data || !is_array($data) || !$key || !$value || !$data[0][$key]) return array();
-	$arr=array();
-	$tmp='';
+	$arr = array();
 	foreach($data as $k=>$v){
 		if(is_array($value)){
-			$tmp='';
+			$tmp = '';
 			foreach ($value as $k1=>$v1){
 				if(!$v[$k1]) continue;
 				$tmp.=$v1.$v[$k1];
 			}
-			$arr[$v[$key].$key_postfix]=$tmp;
+			$arr[$v[$key].$key_postfix] = $tmp;
 		}
 		else
-			$arr[$v[$key].$key_postfix]=$v[$value];
+			$arr[$v[$key].$key_postfix] = $v[$value];
 	}
 	return $arr;
 }
-function md_arr_2_idx_arr($data,$key){
+/**
+ * 二维数组转索引数组
+ * @param array $data
+ * @param string $key
+ * @return idxArr
+ */
+function md_arr_2_idx_arr($data, $key){
 	if(!is_array($data)) return array();
-	$arr=array();
+	$arr = array();
 	foreach ($data as $v){
-		$arr[]=$v[$key];
+		$arr[] = $v[$key];
 	}
 	return $arr;
 }
-function md_arr_2_ids($data,$key){
+/**
+ * 二维数组转逗号分隔字符串
+ * @param array $data
+ * @param string $key
+ * @return string
+ */
+function md_arr_2_ids($data, $key){
 	if(!is_array($data)) return '';
-	$ids='';
+	$ids = array();
 	foreach ($data as $v){
-		if($v[$key]) $ids.=$v[$key].',';
+		if($v[$key]) $ids[] = $v[$key];
 	}
-	return rtrim($ids,',');
+	return implode(',', $ids);
 }
 /**
  * 简单数组转键值对数组
@@ -203,17 +207,26 @@ function md_arr_2_ids($data,$key){
  * @param idxArr $array
  * @return ascArr
  */
-function idx_arr_2_asc_arr($arr=array()) {
-	$kv = array ();
-	foreach ( $arr as $v ) {
-		$kv [$v] = $v;
+function idx_arr_2_asc_arr($arr = array()) {
+	$kv = array();
+	foreach($arr as $v) {
+		$kv[$v] = $v;
 	}
 	return $kv;
 }
+/**
+ * 可用于URL传递的base64编码
+ * @param string $data
+ * @return string
+ */
 function base64url_encode($data) {
 	return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
-
+/**
+ * 可用于URL传递的base64解码
+ * @param string $data
+ * @return string
+ */
 function base64url_decode($data) {
 	return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
 }
@@ -224,7 +237,7 @@ function base64url_decode($data) {
  * @return string
  */
 function aes_encrypt($input, $key) {
-	$encryptor=new Common\Model\HyAESModel($key);
+	$encryptor=new Common\Model\HyCryptoModel($key);
 	return $encryptor->encrypt($input);
 }
 /**
@@ -234,7 +247,7 @@ function aes_encrypt($input, $key) {
  * @return string
  */
 function aes_decrypt($input, $key) {
-	$encryptor=new Common\Model\HyAESModel($key);
+	$encryptor=new Common\Model\HyCryptoModel($key);
 	return $encryptor->decrypt($input);
 }
 /**
@@ -315,19 +328,19 @@ function act_decrypt($id=''){
 }
 function val_encrypt($val){
 	if(!$val) return '';
-	$encryptor=new Common\Model\HyAESModel(C('CRYPT_KEY_VAL'));
+	$encryptor=new Common\Model\HyCryptoModel(C('CRYPT_KEY_VAL'));
 	return 'encrypt_val-'.$encryptor->encrypt_fixed($val);
 }
 function val_decrypt($val=''){
 	if(!$val) return '';
 	if(false===strpos($val, 'encrypt_val-')) return $val;
-	$encryptor=new Common\Model\HyAESModel(C('CRYPT_KEY_VAL'));
+	$encryptor=new Common\Model\HyCryptoModel(C('CRYPT_KEY_VAL'));
 	return $encryptor->decrypt_fixed(substr($val,strlen('encrypt_val-')),C('CRYPT_KEY_VAL'));
 }
 function val_decrypt_quote(&$val=''){
 	if(!$val) return;
 	if(false===strpos($val, 'encrypt_val-')) return;
-	$encryptor=new Common\Model\HyAESModel(C('CRYPT_KEY_VAL'));
+	$encryptor=new Common\Model\HyCryptoModel(C('CRYPT_KEY_VAL'));
 	$val = $encryptor->decrypt_fixed(substr($val,strlen('encrypt_val-')),C('CRYPT_KEY_VAL'));
 }
 /**

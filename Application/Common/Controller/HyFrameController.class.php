@@ -46,10 +46,17 @@ class HyFrameController extends Controller {
 				foreach ($v as $k1=>$v1){
 					foreach ($v1 as $k2=>$v2){
 						$args = explode('/', $k2);
-						if(in_array($args[0], array(MODULE_NAME, '*'))
-							&& in_array($args[1], array(CONTROLLER_NAME, '*'))
-							&& in_array($args[2], array(ACTION_NAME, '*'))) continue;
-						unset($assets[$k][$k1][$k2]);
+						if(!in_array($args[0], array(CONTROLLER_NAME, '*'))
+						 || !in_array($args[1], array(ACTION_NAME, '*'))){
+							unset($assets[$k][$k1][$k2]);
+							continue;
+						}
+						if(is_array($assets[$k][$k1][$k2])){
+							foreach ($assets[$k][$k1][$k2] as $k3=>$v3){
+								$assets[$k][$k1][$k3] = $v3;
+							}
+							unset($assets[$k][$k1][$k2]);
+						}
 					}
 				}
 			}

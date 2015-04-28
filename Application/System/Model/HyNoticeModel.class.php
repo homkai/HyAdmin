@@ -10,6 +10,7 @@ use Common\Model\HyAllModel;
 class HyNoticeModel extends HyAllModel {
 		
 	protected $tableName = 'frame_notice';
+	
 	/**
 	 * @overrides
 	 */

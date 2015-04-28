@@ -11,9 +11,10 @@ var HyFrame = function(){
 	$.extend({
 		/**
 		 * URL参数解析，默认解析当前URL
-		 * 类PHP parse_url：$.url('parse', [url])
 		 * 获取GET参数的值： $.url('?[param]', [url])
 		 * 获取锚点的值： $.url('#[param]', [url])
+		 * 类PHP parse_url：$.url('parse', [url])
+		 * 获取所在域名：$.url('domain', [url])
 		 */
 		url: function(arg, url){
 			url = url || location.href;
@@ -68,32 +69,20 @@ var HyFrame = function(){
 		 */
 		U: function(parse, data){
 			var parse = $.url('parse', parse);
-			var getBaseURL = function(type){
-				switch(type){
-					case 'I':
-						return _INDEX_;
-					case 'M':
-						return _MODULE_;
-					case 'C':
-						return _CONTROLLER_;
-					case 'A':
-						return _ACTION_;
-				}
-			};
 			var url = '';
 			if(!parse.path) {
-				url = getBaseURL('A');
+				url = _ACTION_;
 			}else{
 				var path = parse.path.split('/');
 				switch(path.length){
 					case 3:
-						url = getBaseURL('I');
+						url = _INDEX_;
 						break;
 					case 2:
-						url = getBaseURL('M');
+						url = _MODULE_;
 						break;
 					case 1:
-						url = getBaseURL('C');
+						url = _CONTROLLER_;
 						break;
 				}
 				url += '/'+parse.path;
@@ -175,9 +164,9 @@ var HyFrame = function(){
 		 * 大写首字母
 		 */
 		ucfirst: function(str){
-			return str.replace(/(^|\s+)\w/g,function(s){
-	            return s.toUpperCase();
-	        })
+			return str.replace(/(^|\s+)\w/g,function(m){
+	            return m.toUpperCase();
+	        });
 		},
 		/**
 		 * 语音播放功能（Chrome 33+）
@@ -234,7 +223,7 @@ var HyFrame = function(){
                   cancel: {
                     label: "取消",
                     className: "default",
-                    callback: function() {
+                    callback: function(){
                     	if($.isFunction(callback_cancle))
                     		callback_cancle();
                     }

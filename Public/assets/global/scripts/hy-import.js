@@ -4,6 +4,7 @@
 var UMEditor = function(){
 	
 	var initEditor=function(toolbar){
+		if(!UM) return ;
 		var id = '';
 		// 非弹窗
 		$('.make-umeditor:not(.umeditor-initialized)').each(function(i){
