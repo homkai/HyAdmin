@@ -68,27 +68,48 @@ SESSION：框架默认将SESSION存在数据库中，在高并发、大容量下
 ## 框架文件结构
 JS：
   global/scripts/hyframe.js       框架基础JS库。提供了众多实用的jQuery Tools的扩展，也提供了针对框架的一些工具。
+  
   global/scripts/jquery.hyall.js  框架管理页面（All in one）的jQuery插件封装，这样用起来更方便，更强大，支持复杂的情况下一个页面多个实例！
+  
   global/scripts/datatable.js     表格Helper
+  
   global/scripts/hy-import.js     其他扩展的支持
+  
   pages/scripts/login.js          登录页面交互处理
+  
   pages/scripts/*.js              页面业务逻辑处理
+  
 Controller：
   HyFrame   框架基础控制器
-  HyAll     管理页面控制器
+  
+  HyAll     管理页面控制器（如果需要遵循框架的统一入口，则自己的业务控制器继承此控制器）
+  
   HyBase    项目基础控制器（如有需要，可在此扩展自己项目的全局代码！）
+  
   HyFile    文件上传下载
+  
   HyStart   项目入口，登录等
+  
   Empty     每个模块必须有一个Empty控制器，这样就可以实现配合HyAllModel对象配置式编程，不写控制器文件完成管理页面。
+  
 Model：
   HyFrame   框架基础模型：封装了对连表查询的简单而强大的支持
-  HyAll     实现配置式编程，负责管理列表页及CRUD
+  
+  HyAll     实现配置式编程，负责管理列表页及CRUD，自己的业务模型继承此模型
+  
   HyBase    项目基础模型（可根据项目需要扩展）
+  
   HyFile    文件上传下载
+  
   HyAccount 账号相关，登录、加密等
+  
   HyAuth    权限验证及路由
+  
   HyNotice  系统公告
+  
   HyAlert   消息提醒
+  
   HyLog     操作日志
+  
   HyMail    站内邮件
   
