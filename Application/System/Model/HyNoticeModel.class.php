@@ -134,7 +134,7 @@ class HyNoticeModel extends HyAllModel {
 	
 	protected function detail($pk){
 		$arr=$this->where(array('id'=>$pk))->find('hy');
-		return array(
+		return array('table'=>array(
 				'table1'=>array(
 						'title'	=>	'通知公告',
 						'icon'	=>	'fa-volume-up',
@@ -154,6 +154,6 @@ class HyNoticeModel extends HyAllModel {
 								''=>$arr['content'],
 						)
 				),				
-		);
+		));
 	}
 }

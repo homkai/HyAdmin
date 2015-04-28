@@ -308,6 +308,9 @@ jQuery.fn.hyall = function(config){
 			the.setModal(tpl);
     	    if(the.config.options.tips.add) $modal.find('.alert-tips').show().find('span').html(the.config.options.tips.add);
     	    the.validateFormHandler({form: $modal.find('form'), rules: build.rules, hy: true});
+    		$modal.on('shown.bs.modal',function(){
+    			the.trigger('shown.hyall.form.add');
+    		});
 			$modal.modal('toggle');
     	},
     	initDetail: function(data, tpl, $con, baseURL){
@@ -335,18 +338,19 @@ jQuery.fn.hyall = function(config){
     			$.post(baseURL || $.U('ajax?q=detail'), $.extend({},data), function(html){
     				$.unloading();
     				if(!$con || !$con.size()){
-        				tpl.modal = (tpl.modal || data.q || 'default');
+        				tpl.modal = (tpl.modal || data.type || 'default');
         				tpl.body.main=html;
         				$modal.html(HyFrame.tplRplRecursive(tpl));
         				var once=0;
                 		$modal.on('shown.bs.modal',function(){
                 			if(once++) return;
-                			the.trigger('shown.hyall.detail');
+                			if(data.type) the.trigger('shown.hyall.detail.'+data.type);
                 		});
         				$modal.modal('show');
     				}else{
     					$con.html(html);
             			the.trigger('shown.hyall.detail');
+            			if(data.type) the.trigger('shown.hyall.detail.'+data.type);
     				}
     			});
     		};
@@ -368,11 +372,11 @@ jQuery.fn.hyall = function(config){
 	    	    return;
 		    });
     		$dtContainer.find('.dt-top-actions,.dt-bottom-actions').on('click','.dt-detail',function(){
-				var query=$(this).data('detail');
-				if(!query) return;
-    			var option=the.config.options.buttons[query];
+				var type=$(this).data('detail');
+				if(!type) return;
+    			var option=the.config.options.buttons[type];
     			var title='<h4 class="caption"><i class="fa font-green-sharp '+(option.icon||'')+' fa-fw"></i><span class="caption-subject font-green-sharp bold">'+(option.title||'')+'{title}信息</span></h4>'.replace('{title}',the.config.title);
-    			doLoad({q:query},{title:title});
+    			doLoad({type: type}, {title: title});
 	    	    return;
     		});
     	},
@@ -401,6 +405,9 @@ jQuery.fn.hyall = function(config){
         			the.setModal(tpl);
             	    the.validateFormHandler({form: $modal.find('form'), rules: build.rules, hy: true});
 	        	    if(the.config.options.tips.edit) $modal.find('.alert-tips').show().find('span').html(the.config.options.tips.edit);
+	        		$modal.on('shown.bs.modal',function(){
+	        			the.trigger('shown.hyall.form.edit');
+	        		});
 	        	    $modal.modal('toggle');
     	    	});
     	    });

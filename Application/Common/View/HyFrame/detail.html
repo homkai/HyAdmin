@@ -1,8 +1,8 @@
 <div id="hy-detail-wrapper" class="hy-detail-wrapper">
-	<php>if(1===count($data)) $col0=12;else $col0=6;</php>
+	<php>if(1===count($data['table'])) $col0=12;else $col0=6;</php>
 	<div class="row detail-tables">
 		<div class="col-md-{$col0}">
-			<volist name="data" id="v" mod="2">
+			<volist name="data.table" id="v" mod="2">
 				<php>if(1===$mod) continue;</php>
 				<div class="portlet box {$v.style}">
 					<div class="portlet-title">
@@ -23,7 +23,7 @@
 			</volist>
 		</div>
 		<div class="col-md-6">
-			<volist name="data" id="v" mod="2">
+			<volist name="data.table" id="v" mod="2">
 				<php>if(0===$mod) continue;</php>
 				<div class="portlet box {$v.style}">
 					<div class="portlet-title">
@@ -52,5 +52,5 @@
 	</div>
 <div class="clearfix"></div>
 <script type="text/javascript">
-var hyJSONData=[{$data.json}] && [{$data.json}][0];
+hyDetailJSON = [{$data.json}][0];
 </script>

@@ -62,7 +62,7 @@ class ClassModel extends HyAllModel {
 								'icon'=>'fa-plus'
 						)
 				),
-				'allScript'=>'Hy:import_echarts'
+				'initJS'	=> 'ClassInfo',
 		);
 	}
 	/**
@@ -74,7 +74,7 @@ class ClassModel extends HyAllModel {
 						'title' => '名称',
 						'list' => array (
 								'orderdir' => 'CONVERT(name USING gbk)',
-								'callback'=>array('tplReplace','<a href="javascript:;" title="查看详情" class="btn btn-xs blue dt-view">&nbsp;{0}&nbsp;<i class="fa fa-eye"></i></a>'),
+								'callback'=>array('tplReplace', C('TPL_DETAIL_BTN')),
 								'search' => array (
 										'query' => 'like' 
 								) 
@@ -136,23 +136,13 @@ class ClassModel extends HyAllModel {
 	 * 用于支持fieldsOptions
 	 */
 	protected function getOptions_grade() {
-		return M ( 'class' )->where ( array (
-				'college_id' => ss_clgid() 
-		) )->getField ( 'grade,grade as grade1' );
+		return M('class')->where (array('college_id'=>ss_clgid()))->getField('grade,grade as grade1');
 	}
 	public function detail($pk){
-		$where=array($this->getPk()=>$pk);
-		$reflect=array(
-				'instructor|id|class_id|teacher_id,remark instructor_remark||left',
-				'user|instructor.teacher_id|id|name teacher,phone||left'
-		);
-		$instructor=$this->reflect($reflect)->where($where)->select(array('hy'=>true,'decrypt'=>true));
-		$arr=$instructor[0];
-		$reflect=array('student|id|class_id');
-		$total=$this->reflect($reflect)->where($where)->count('hy');
-		$reflect[]='user|student.user_id|id|name user_name,job user_job';
-		$job=$this->reflect($reflect)->where(array('user.job'=>array('neq',''),$this->getPk()=>$pk))->select('hy');
-		$detail=array(
+		$where = array('id'=>$pk);
+		$arr = $this->where($where)->find();
+		$total = $this->associate(array('student|id|class_id'))->where($where)->count();
+		return array('table'=>array(
 				'base'=>array(
 						'title'=>'班级信息',
 						'icon'=>'fa-users',
@@ -168,32 +158,24 @@ class ClassModel extends HyAllModel {
 						'title'=>'学生信息',
 						'icon'=>'fa-pencil',
 						'style'=>'purple-plum',
-						'value'=>array_merge(array(
+						'value'=> array(
 								'总人数：'=>$total.'人',
-								'花名册：'=>'<a href="'.U('Student/all',array('class_id_text'=>$arr['id'])).'" class="btn default red-stripe pull-right">查看班级花名册</a>'
-						),md_arr_2_asc_arr($job,'user_job','user_name','：')?:array())
-				), 
-				'instructor'=>array(
-						'title'=>'辅导员信息',
-						'icon'=>'fa-book',
-						'style'=>'yellow-crusta',
-						'cols'=>'3,9',
-						'value'=>md_arr_2_asc_arr($instructor,'teacher',array('phone'=>'电话：','instructor_remark'=>'&nbsp;&nbsp;备注：'))
+								'花名册：'=>'<a href="'.U('User/Student/all',array('class_id_text'=>$arr['id'])).'" class="btn default red-stripe pull-right">查看班级花名册</a>'
+						)
 				)
-		);
-		return $detail;
+		));
 	}
 	/**
 	 * 图表汇总
 	 * @return json
 	 */
 	protected function detail_chart(){
-		$grades=$this->reflect(array('student|id|class_id'))
+		$grades=$this->associate(array('student|id|class_id'))
 			->where(array('student.status'=>1,'status'=>1,'college_id'=>ss_clgid()))
-			->field(array('grade'=>'name','count(grade)'=>'value'))->group('grade')->order('grade asc')->select('hy');
-		$classes=$this->reflect(array('student|id|class_id'))
+			->field(array('grade'=>'name','count(grade)'=>'value'))->group('grade')->order('grade asc')->select();
+		$classes=$this->associate(array('student|id|class_id'))
 			->where(array('student.status'=>1,'status'=>1,'college_id'=>ss_clgid()))
-			->field(array('name','count(hy.id)'=>'value'))->group('hy.id')->order('grade asc')->select('hy');
+			->field(array('name','count(hy.id)'=>'value'))->group('hy.id')->order('grade asc')->select();
 		return array('json'=>json_encode(array('grades'=>$grades,'classes'=>$classes)));
 	}
 }

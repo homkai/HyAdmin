@@ -90,7 +90,7 @@ class HyLogModel extends HyAllModel{
 	
 	protected function detail($pk){
 		$arr=$this->where(array('id'=>$pk))->find('hy');
-		return array(
+		return array('table'=>array(
 				'table1'=>array(
 						'title'=>'日志记录',
 						'icon'=>'fa-file-text',
@@ -125,6 +125,6 @@ class HyLogModel extends HyAllModel{
 								'POST参数：'=>"<span data-text=\"{$arr['post']}\">".substr($arr['post'], 0, 38)."...</span>",
 						)
 				), 
-		);
+		));
 	}
 }

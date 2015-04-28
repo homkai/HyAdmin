@@ -76,8 +76,8 @@ abstract class HyAllController extends HyBaseController {
 		}else{
 			$this->data = $data;
 		}
-		$tpl = $query ? 'detailTpl_'.$query : 'detailTpl';
-		$tpl = $this->model->getPageOptions($tpl) ?: 'detail'.($type ? '_'.$type : '');
+		if($type) $tpl = $this->model->getPageOptions('detailTpl_'.$type);
+		if(!$tpl) $tpl = $this->model->getPageOptions('detailTpl');
 		$this->display($tpl);
 	}
 }

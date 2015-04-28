@@ -176,7 +176,7 @@ class HyAlertModel extends HyAllModel{
 			$read = $uM->where($map)->getField('name', true) ?: array();
 		}
 		$read= !$read ? '<div class="pull-right">无</div>' : implode('、', $read).'<br><div class="pull-right">'.count($read).'个人';
-		return array(
+		return array('table'=>array(
 				'table1'=>array(
 						'title'=>'通知提醒',
 						'icon'=>'fa-volume-up',
@@ -215,7 +215,7 @@ class HyAlertModel extends HyAllModel{
 								''=>$read,
 						)
 				), 
-		);
+		));
 	}
 	/**
 	 * 标记已读

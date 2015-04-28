@@ -111,7 +111,7 @@ var HyFrame = function(){
 		 * timestamp 为毫秒级型的
 		 */
 		date: function(format, timestamp){
-			var date = new Date(timestamp), weekday;
+			var date = timestamp ? new Date(timestamp) : new Date(), weekday;
 			return format.replace(/[YmdHisx]/g, function(m0){
 				switch(m0){
 					case 'Y':

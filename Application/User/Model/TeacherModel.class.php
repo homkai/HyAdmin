@@ -215,8 +215,8 @@ class TeacherModel extends UserModel {
 		$associate=array(
 				'user|user_id|id|user_no,name,sex,phone,roles,email,login_last_time,login_times,avatar_file'		
 		);
-		$arr=$this->associate($associate)->where(array('user.id'=>$pk))->find('hy');
-		$detail = array(
+		$arr=$this->associate($associate)->where(array('user.id'=>$pk))->find();
+		return array('table'=>array(
 				'base'=>array(
 						'title'=>'基础信息',
 						'icon'=>'fa-list-alt',
@@ -248,7 +248,6 @@ class TeacherModel extends UserModel {
 								'累计登录：'=>($arr['login_times']?:0).'次',
 						)
 				)
-		);
-		return $detail;
+		));
 	}
 }

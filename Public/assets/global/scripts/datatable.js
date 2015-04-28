@@ -88,7 +88,7 @@ var Datatable = function() {
                     deferRender: true,
                     ajax: { // define ajax settings
                         url: "", // ajax URL
-                        type: "get", // request type
+                        type: "post", // request type
                         timeout: 5000,
                         data: function(data) { // add request parameters before submit
                         	var dtColumns = options.hyall.getDtColumns();
