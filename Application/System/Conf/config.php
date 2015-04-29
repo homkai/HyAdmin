@@ -26,6 +26,7 @@ return array(
 							
 					),
 					'JS'	=>	array(
+							'Index/*'		=>	'index.js',
 							'HyAlert/all'	=>	'hy-alert.js',
 							'HyAlertA2/all'	=>	'hy-alert.js',
 					)

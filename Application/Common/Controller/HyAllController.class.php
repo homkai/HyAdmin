@@ -11,7 +11,7 @@ abstract class HyAllController extends HyBaseController {
 	protected function _initialize(){
 		parent::_initialize();
 		// 自动初始化model
-		if(null === $this->model) $this->model=D(CONTROLLER_NAME);
+		if(null === $this->model) $this->model = D(CONTROLLER_NAME);
 	}
 		
 	/**

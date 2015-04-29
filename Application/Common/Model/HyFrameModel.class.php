@@ -153,7 +153,7 @@ abstract class HyFrameModel extends Model {
 		// 收集limit
 		if($hy && !$this->options['limit']) $this->limit($this->pageOptions['limit']);
 		// 收集order
-		if($order = $this->options['order'] ?: (!$hy ? $this->pageOptions['order'] : null)){
+		if($order = $this->options['order'] ?: ($hy ? $this->pageOptions['order'] : null)){
 			// 排序字段自动加表别名以避免冲突
 			if($associate && $hy && $order && is_string($order) && false===strpos($order, '(')){
 				$order = implode(',', array_map(function($v){

@@ -224,7 +224,7 @@ abstract class HyAllModel  extends HyBaseModel{
 	 * AJAX入口
 	 * @param array $json
 	 */
-	public function ajax_edit(&$json){
+	protected function ajax_edit(&$json){
 		$id = act_decrypt($en = I('pk'));
 		$GLOBALS['ajaxQuery'] = 'edit';
 		$GLOBALS['ajaxPk'] = $id;
@@ -240,7 +240,7 @@ abstract class HyAllModel  extends HyBaseModel{
 	 * AJAX入口
 	 * @param array $json
 	 */
-	public function ajax_update(&$json){
+	protected function ajax_update(&$json){
 		if(false === ($pk = token_validator(I('_token')))) {
 			$log=array('msg'=>"疑似攻击", 'info'=>'text-danger');
 			Hook::listen('hy_log', $log);
@@ -256,7 +256,7 @@ abstract class HyAllModel  extends HyBaseModel{
 	 * AJAX入口
 	 * @param array $json
 	 */
-	public function ajax_insert(&$json){
+	protected function ajax_insert(&$json){
 		$json['status'] = !!$this->insert();
 		$json['info'] = $json['status'] ? '数据新增成功！' : ($this->getError() ?: '数据新增失败，请检查是有有重复记录，或数据是否合法！');
 		$json['reload'] = $this->pageOptions['okRefresh'] ?: false;
@@ -265,7 +265,7 @@ abstract class HyAllModel  extends HyBaseModel{
 	 * AJAX入口
 	 * @param array $json
 	 */
-	public function ajax_delete(&$json){
+	protected function ajax_delete(&$json){
 		if(!is_array($arr=explode(',', (I('pk'))))){
 			$json['info']='数据非法！';
 			return false;
@@ -288,7 +288,7 @@ abstract class HyAllModel  extends HyBaseModel{
 	 * AJAX入口
 	 * @param string $pk
 	 */
-	public function ajax_detail($type){
+	protected function ajax_detail($type){
 		$pk = act_decrypt(I('pk'));
 		// 权限检查
 		if(false===$this->checkPk($pk,'detail')) return false;

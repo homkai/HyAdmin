@@ -25,7 +25,7 @@ class HyFrameController extends Controller {
 	public function __construct(){
 		// 权限检查
 		$auth=HyAuthModel::authAccess();
-		if(!$auth['status']) $this->error($auth['info'], '#');
+		if(!$auth['status']) E($auth['info']);
 		if($auth['model']) $this->model = D($auth['model']);
 		// 子类的_initialize方法
 		parent::__construct();

@@ -103,7 +103,7 @@ return array_merge( $db = array(
 		'FEEDBACK_UID'			=>	9001,
 		
 		// 公共控制器：
-		'PUBLIC_CONTROLLER'		=>	array('HyStart', 'Index', 'Inbox', 'HyAbout', 'HyFeedback', 'HyFile', 'HyChat'),
+		'PUBLIC_CONTROLLER'		=>	array('HyStart', 'Index', 'HyFile', 'HyChat'),
 
 		// 单点登录：
 		'SINGLE_POINT_ONLINE'	=>	false,

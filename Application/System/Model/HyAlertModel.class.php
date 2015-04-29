@@ -279,4 +279,14 @@ class HyAlertModel extends HyAllModel{
 		if($count<1 || ($count>1 && !$multiple)) return false;
 		return $this->where($map)->setField('status', $this->max('status') + 1) ? true : false;
 	}
+	/**
+	 * 未读消息列表
+	 * @return array
+	 */
+	public function getUnreadList(){
+		// 因此方法执行频度较高，所以采用原生SQL
+		$userId = ss_uid();
+		$sql = "SELECT `id`,`category`,`icon`,`message`,`url`,`type`,`create_time` FROM `".DTP."frame_alert` where `to_users` LIKE '%,{$userId},%' AND ( IFNULL(`read_users`,'')='' OR `read_users` NOT LIKE '%,{$userId},%') AND `status`=1 ORDER BY `id` DESC";
+		return $this->query($sql);
+	}
 }

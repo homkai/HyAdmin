@@ -56,9 +56,11 @@ var UMEditor = function(){
 			});
 		});
 	};
+	
 	return{
 		init:function(toolbar){
 			initEditor(toolbar);
 		}
 	};
+	
 }();

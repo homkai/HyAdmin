@@ -23,8 +23,7 @@ class IndexController extends HyBaseController {
 		$roles=session('roleSwitch');
 		if(count($roles)) $this->roles=$roles;
 		// 系统公告
-		$this->notice=D('HyNotice')->limit('5')->select('hy');
-		// 近期精彩
+		$this->notice=D('HyNotice')->limit('5')->select(array('hy'=>true));
 		$this->display();
     }
   
