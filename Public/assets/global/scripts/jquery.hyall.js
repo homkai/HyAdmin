@@ -39,6 +39,7 @@ jQuery.fn.hyall = function(config){
 	 * 根据扩展名取MINE字符串
 	 */
 	var getMinesByExt = function(exts){
+		if(!exts) return '';
 		if('string' === typeof exts) exts = exts.split(',');
 		var mines = [];
 		$.each(exts, function(k,v){
@@ -207,30 +208,31 @@ jQuery.fn.hyall = function(config){
     		if(!root.file) root.file={};
     		if(!v) v=false;
     		if(!val) val=false;
+    		var exts = getMinesByExt(root.file.ext);
     		// TODO 唉，说多了都是泪呀！
-    		return '<div class="hy-upload display-none" data-field="'+k+'">'+
-    		'<div class="row" style="width:260px;"><div class="col-xs-6">'+
-				'<div class="b-upload__hint">'+ ( val[k] ? '<a href="'+val[k]+'" target="_blank">原始文件</a>' : '请先选择文件' ) + '</div>'+
-				'<div class="js-files b-upload__files">'+
-				'<div class="js-file-tpl b-thumb" data-id="<%=uid%>" title="<%-name%>, <%-sizeText%>">'+
-					'<div data-fileapi="file.remove" class="b-thumb__del">✖</div>'+
-					'<div class="b-thumb__preview">'+
-						'<div class="b-thumb__preview__pic"></div>'+
-					'</div><% if( /^image/.test(type) ){ %><div data-fileapi="file.rotate.cw" class="b-thumb__rotate"></div><% } %><div class="b-thumb__progress progress progress-small"><div class="bar"></div></div>'+
-					'<div class="b-thumb__name"><%-name%></div>'+
-				'</div>'+
-			'</div>'+
-			'</div>'+
-			'<div class="col-xs-6">'+
-				'<div class="btn blue btn-small js-fileapi-wrapper js-browse btn-select"">'+
-					'<span>选择</span>'+
-					'<input type="file" '+(root.file.ext ? 'accept="'+getMinesByExt($.isArray(root.file.ext) ? root.file.ext : root.file.ext.split(','))+'"' : '')+' name="filedata" /><input type="hidden" name="'+k+'" />'+
-				'</div>'+
-				'<div class="js-upload btn purple btn-small btn-upload">'+
-					'<span>上传</span>'+
-				'</div>'+
-			'</div></div>'+
-			'</div>';
+    		return ['<div class="hy-upload display-none" data-field="'+k+'">',
+    		'<div class="row" style="width:260px;"><div class="col-xs-6">',
+				'<div class="b-upload__hint">'+ ( val[k] ? '<a href="'+val[k]+'" target="_blank">原始文件</a>' : '请先选择文件' ) + '</div>',
+				'<div class="js-files b-upload__files">',
+				'<div class="js-file-tpl b-thumb" data-id="<%=uid%>" title="<%-name%>, <%-sizeText%>">',
+					'<div data-fileapi="file.remove" class="b-thumb__del">✖</div>',
+					'<div class="b-thumb__preview">',
+						'<div class="b-thumb__preview__pic"></div>',
+					'</div><% if( /^image/.test(type) ){ %><div data-fileapi="file.rotate.cw" class="b-thumb__rotate"></div><% } %><div class="b-thumb__progress progress progress-small"><div class="bar"></div></div>',
+					'<div class="b-thumb__name"><%-name%></div>',
+				'</div>',
+			'</div>',
+			'</div>',
+			'<div class="col-xs-6">',
+				'<div class="btn blue btn-small js-fileapi-wrapper js-browse btn-select"">',
+					'<span>选择</span>',
+					'<input type="file" '+(exts ? ' accept="'+exts+'"' : '' ) + ' name="filedata" /><input type="hidden" name="'+k+'" />',
+				'</div>',
+				'<div class="js-upload btn purple btn-small btn-upload">',
+					'<span>上传</span>',
+				'</div>',
+			'</div></div>',
+			'</div>'].join('');
     	},
     	html: function(root, k, v, val){
     		return root.html.replace(/\{:([\w\-#]+)}/g,function(r0,r1){

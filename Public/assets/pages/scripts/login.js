@@ -60,7 +60,7 @@ var Login = function () {
                         overlayColor: 'none'
 	                });
 	    			var account = $.trim($('[name="hy_username"]').val());
-        			var pwd = crypto_sha1($.trim($('[name="hy_password"]').val()));
+        			var pwd = crypto_sha1($.trim($('[name="hy_password"]').val())+$('#login-addon').val());
         			$.ajax({
         				url: $.U('ajax?_query=login'),
         				data: {u: crypto_aes(account, $('#login-key').val()), p: crypto_aes(pwd, pwd.substr(5, 32))},

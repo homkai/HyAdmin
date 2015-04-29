@@ -191,7 +191,7 @@ abstract class HyAllModel  extends HyBaseModel{
 			}
 			// 安全过滤
 			$v=array_intersect_key($v,array('title'=>'', 'list'=>array(), 'form'=>array()));
-			unset($v['list']['orderDir'], $v['list']['callback'], $v['form']['callback'], $v['form']['validate']['server'], $v['list']['search']['sql'], $v['form']['fill']);
+			unset($v['list']['order'], $v['list']['callback'], $v['form']['callback'], $v['form']['validate']['server'], $v['list']['search']['sql'], $v['form']['fill']);
 			$v=array_merge(array('title'=>'', 'list'=>array('search'=>false), 'form'=>false), $v);
 		}
 		return $this->fieldsOptions;
@@ -316,7 +316,7 @@ abstract class HyAllModel  extends HyBaseModel{
 			$order = I('order');
 			if(0 !== strpos($order['field'], '_')){
 				$table = $this->fieldsOptions[$order['field']]['table'];
-				$this->pageOptions['order'] = ($this->fieldsOptions[$order['field']]['list']['orderDir'] ?: ($table ? $table.'.' : '').$order['field']).' '.$order['sort'];
+				$this->pageOptions['order'] = ($this->fieldsOptions[$order['field']]['list']['order'] ?: ($table ? $table.'.' : '').$order['field']).' '.$order['sort'];
 			}
 			$this->pageOptions['limit'] = "$offset,$limit";
 		}

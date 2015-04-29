@@ -72,7 +72,7 @@ class TeacherModel extends UserModel {
 						'title' => '姓名',
 						'table' => 'user',
 						'list' => array (
-								'orderDir' => 'CONVERT(user.name USING gbk)',
+								'order' => 'CONVERT(user.name USING gbk)',
 								'callback'=>array('tplReplace','{callback}'=>array('val_decrypt'),C('TPL_DETAIL_BTN'),'{#}'),
 								'search' => array (
 										'query' => 'like' ,

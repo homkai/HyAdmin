@@ -10,10 +10,8 @@ defined('TIME') or define('TIME', time());
 class TestController extends Controller{
 	
 	public function test(){
-		dump('Start');
-		$model = new \System\Model\UserModel();
-		$arr = $model->associate(array('teacher|id|user_id|job'))->order('id asc')->limit(1)->field('id')->select();
-		dump($arr);
+		$model = D('User');
+		$data = $model->select();
 	}
 	
 }

@@ -64,13 +64,15 @@ return array_merge( $db = array(
 		
 	// 加密秘钥 
 		// 文件：
-		'CRYPT_KEY_FILE'		=>	'qOlGBPJJFpMnJtffh5Jq4FKpjHKgueA2',
+		'CRYPT_KEY_FILE'		=>	'$%&HGfhs+KsTPxlR]K~guIY^(6kfBIFS',
 		// 通信：
-		'CRYPT_KEY_ACT'			=>	'R%&^%&(*IU*U#R"I#@R]3r*_&^*a34r2',
+		'CRYPT_KEY_ACT'			=>	'MY^zC5hdl*.HZ0DsouH=m].Us86yM4!S',
 		// 密码：
-		'CRYPT_KEY_PWD'			=>	'H#@!"O@$%^*1%"2M&0?_:1Y*4I$.$#^T',
+		'CRYPT_KEY_PWD'			=>	'a@#y$V4%9i$&*JG%$#Li*(K:!*3%Q~p0',
+		// 密码哈希前补充的复杂串：
+		'PWD_HASH_ADDON'		=>	'@*H$%Y:1&4',
 		// 其他字段：
-		'CRYPT_KEY_VAL'			=>	'A3SFW23R^)&2(Fum&hS^8#%SDFW907T8',
+		'CRYPT_KEY_VAL'			=>	'fb+%&*HJK56-^$:(5KQ&9hK@(SZ^175A',
 		
 	// 系统其他配置
 		// 默认模块：

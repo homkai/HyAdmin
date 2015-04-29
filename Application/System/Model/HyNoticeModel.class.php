@@ -88,6 +88,9 @@ class HyNoticeModel extends HyAllModel {
 						),
 						'form'=>array(
 							'type'=>'file',
+							'file'=>array(
+									'ext'=>'doc,docx,zip,rar,txt'
+							),
 							'style'=>'input-small'
 						)
 				),

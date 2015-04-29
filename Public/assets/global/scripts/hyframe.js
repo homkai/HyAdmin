@@ -520,6 +520,7 @@ var HyFrame = function(){
 	    		var $the = $(this);
 	    		$the.fileapi({
 	    		   url: $.U('System/HyFile/upload'),
+	    		   accept: $the.find('[name="filedata"]').attr('accept'),
 	    		   multiple: false,
 	    		   maxFiles:1,
 	    		   elements: {
