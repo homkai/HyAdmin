@@ -1,6 +1,10 @@
 # HyFrame
 简洁、流畅、安全、自适应移动设备的后台管理框架（基于ThinkPHP）
+
 Document:http://pan.baidu.com/s/1gdCM4iJ
+
+DEMO:http://hyframe.aihe.net.cn/demo/
+
 # Overview
 框架基于ThinkPHP和Metronic二次封装，集成了众多现代特性（移动适配、AJAX为主），适用于多人协作开发中大型项目的后台管理框架。
 
