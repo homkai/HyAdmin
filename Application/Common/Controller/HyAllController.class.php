@@ -6,7 +6,7 @@ use Think\Hook;
  * @author Homkai QQ:345887894
  *
  */
-abstract class HyAllController extends HyBaseController {
+abstract class HyAllController extends HyFrameController {
 	
 	protected function _initialize(){
 		parent::_initialize();

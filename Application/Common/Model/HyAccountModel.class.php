@@ -1,6 +1,6 @@
 <?php
 namespace Common\Model;
-class HyAccountModel extends HyBaseModel{
+class HyAccountModel extends HyFrameModel{
 	
 	protected $tableName = 'user';
 	
@@ -11,7 +11,7 @@ class HyAccountModel extends HyBaseModel{
 	 */
 	public function login($account){
 		$arr=$this->where(array('user_no'=>$account,'status'=>1))->field(true)->find();
-		if($arr)$arr['password']=$this->pwdDecrypt($arr['password'],C('CRYPT_KEY_PWD'));
+		if($arr) $arr['password'] = $this->pwdDecrypt($arr['password'], C('CRYPT_KEY_PWD'));
 		return $arr;
 	}
 	/**
@@ -19,17 +19,17 @@ class HyAccountModel extends HyBaseModel{
 	 * @param string $pwd
 	 * @return string
 	 */
-	public function pwdEncrypt($pwd,$isSha1=false){
-		if(!$isSha1)$pwd=sha1($pwd);
+	public function pwdEncrypt($pwd, $isSha1=false){
+		if(!$isSha1) $pwd = sha1($pwd.C('PWD_HASH_ADDON'));
 		return aes_encrypt($pwd, C('CRYPT_KEY_PWD'));
 	}
 	/**
-	 * 密码加密
+	 * 密码解密
 	 * @param string $pwd
 	 * @return string
 	 */
 	public function pwdDecrypt($pwd){
-		return aes_decrypt($pwd,C('CRYPT_KEY_PWD'));
+		return aes_decrypt($pwd, C('CRYPT_KEY_PWD'));
 	}
 	
 	public function forgetPwdSendVerify($email=''){

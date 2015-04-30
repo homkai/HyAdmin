@@ -1,6 +1,7 @@
 <?php
 namespace Common\Controller;
 use Think\Controller;
+use Think\Think;
 use Common\Model\HyAuthModel;
 use Think\Hook;
 
@@ -20,48 +21,42 @@ class HyFrameController extends Controller {
 	protected $model;
 	
 	/**
-	 * 构造优先级低于子类的 _initialize方法，支持使用$this->model
+	 * 重写构造方法，添加_after_initialize方法
 	 */
-	public function __construct(){
+	public function __construct() {
+		Hook::listen('action_begin',$this->config);
+		//实例化视图类
+		$this->view     = Think::instance('Think\View');
+		//控制器初始化
+		if(method_exists($this,'_initialize'))
+			$this->_initialize();
+		$this->_after_initialize();
+	}
+	/**
+	 * 构造优先级高于子类的 _initialize方法
+	 */
+	protected function _initialize(){
 		// 权限检查
 		$auth=HyAuthModel::authAccess();
 		if(!$auth['status']) E($auth['info']);
 		if($auth['model']) $this->model = D($auth['model']);
-		// 子类的_initialize方法
-		parent::__construct();
-		// 记录日志
-		if(method_exists($this->model, 'getInfo')) {
-			$log=$this->model->getInfo('_title');
-			Hook::listen('hy_log', $log);
-		}
-		// 载入静态资源
-		if(APP_DEBUG) $this->loadAssets();
 	}
 	/**
-	 * 载入静态资源
+	 * 初始化后置方法
 	 */
-	protected function loadAssets(){
-		if(is_array($assets = C('LOAD_ASSETS'))){
-			foreach ($assets as $k=>$v){
-				foreach ($v as $k1=>$v1){
-					foreach ($v1 as $k2=>$v2){
-						$args = explode('/', $k2);
-						if(!in_array($args[0], array(CONTROLLER_NAME, '*'))
-						 || !in_array($args[1], array(ACTION_NAME, '*'))){
-							unset($assets[$k][$k1][$k2]);
-							continue;
-						}
-						if(is_array($assets[$k][$k1][$k2])){
-							foreach ($assets[$k][$k1][$k2] as $k3=>$v3){
-								$assets[$k][$k1][$k3] = $v3;
-							}
-							unset($assets[$k][$k1][$k2]);
-						}
-					}
-				}
-			}
-			$this->assign('_assets', $assets);
+	protected function _after_initialize(){
+		// 记录日志
+		if(method_exists($this->model, 'getInfo')) {
+			$log = $this->model->getInfo('_title');
+			Hook::listen('hy_log', $log);
 		}
+	}
+	/**
+	 * 重写display方法，添加视图输出前标签位
+	 */
+	protected function display($templateFile='', $charset='', $contentType='', $content='', $prefix=''){
+		Hook::listen('view_before', $this);
+		return parent::display($templateFile, $charset, $contentType, $content, $prefix);
 	}
 	/**
 	 * 基础身份认证
@@ -84,6 +79,6 @@ class HyFrameController extends Controller {
 	 * @param string $title
 	 */
 	protected function setPageTitle($title = ''){
-		$this->assign('pageTitle', $title);
+		$this->assign('_pageTitle', $title);
 	}
 }

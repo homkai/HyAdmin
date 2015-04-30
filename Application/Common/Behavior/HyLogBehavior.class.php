@@ -2,7 +2,7 @@
 namespace Common\Behavior;
 use Think\Behavior;
 /**
- * 浏览器防刷新检测
+ * 记录操作日志
  */
 class HyLogBehavior extends Behavior{
 	

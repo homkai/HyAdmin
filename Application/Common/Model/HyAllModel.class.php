@@ -6,7 +6,7 @@ use Think\Hook;
  * @author Homkai QQ:345887894
  *
  */
-abstract class HyAllModel  extends HyBaseModel{
+abstract class HyAllModel  extends HyFrameModel{
 	
 	// 模型基础信息
 	protected $infoOptions=array(

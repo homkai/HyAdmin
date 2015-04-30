@@ -6,12 +6,13 @@ use Think\Model;
  * @author Homkai
  *
  */
-class HyAuthModel extends HyBaseModel {
+class HyAuthModel extends HyFrameModel {
 	
 	protected $tableName = 'frame_action';
 
 	/**
-	 * 网站访问基础身份认证
+	 * 网站访问基础身份认证 - 严格保护模式
+	 * @todo 暂时废弃
 	 */
 	public static function baseAccessAuth(){
 		return array('status'=>true);
@@ -19,7 +20,7 @@ class HyAuthModel extends HyBaseModel {
 		// 一次页面重载 ，只验证一次
 		static $pass = false;
 		if($pass) return array('status'=>true);
-		array('info'=>'', 'status'=>false, 'url'=>U('HyStart/login'));
+		array('info'=>'', 'status'=>false, 'url'=>U('System/HyStart/login'));
 		$test = $_SERVER['HTTP_USER_AGENT'] === session('USER_AGENT');
 		if(!$test) return array('info'=>'检测到网络环境异常，为了保障您的信息安全，请重新登录！<br>请勿在登录系统期间清空缓存或切换浏览器模式！', 'status'=>false,'url'=>U('HyStart/login'), 'time'=>5);
 		$key = session('HOMYIT_BASE_AUTH_SEED');
@@ -27,16 +28,12 @@ class HyAuthModel extends HyBaseModel {
 		$text = $_COOKIE['_homyit_token_'];
 		$decode = aes_decrypt_base($text, $key);
 		if(preg_match('/Homyit(\d+)#/', $decode, $m)){
-			/* dump($m[1]);
-			dump($counter); */
 			if($m[1]>=$counter){
-// 				dump('ok');
 				session('HOMYIT_BASE_AUTH_COUNTER',$m[1]);
 				return array('status'=>true);
 			}
 		}
-		//return array('status'=>true);
-		return array('info'=>'身份认证异常！为了保障您的信息安全，请重新登录！', 'status'=>false, 'url'=>U('HyStart/login'), 'time'=>3);
+		return array('info'=>'身份认证异常！为了保障您的信息安全，请重新登录！', 'status'=>false, 'url'=>U('System/HyStart/login'), 'time'=>3);
 	}
 
 	/**

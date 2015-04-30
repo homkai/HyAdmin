@@ -1,20 +1,20 @@
 <?php
 namespace System\Controller;
-use Common\Controller\HyBaseController;
+use Common\Controller\HyFrameController;
 
 /**
  * 首页
  * @author Homkai
  *
  */
-class IndexController extends HyBaseController {
+class IndexController extends HyFrameController {
 	
     public function index(){
     	// 基础访问认证
     	$this->baseAccessAuth();
     	$this->setPageTitle('首页');
     	// 菜单输出
-    	$this->jsonAssign('jsonMenu', S('menuCache_'.session('roles')));
+    	$this->jsonAssign('hyMenu', S('menuCache_'.session('roles')));
     	// 登录信息
     	$log=M('frame_log')->where(array('user_id'=>ss_uid(),'status'=>1,'controller'=>'HyStart','action'=>'ajax','description'=>array('like','%成功%')))->order('id desc')->getField('create_time',2);
 		$this->lastLogin=date('Y年m月d日 H:i',$log[1]);
