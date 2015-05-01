@@ -1,9 +1,10 @@
 # HyFrame
 简洁、流畅、安全、自适应移动设备的后台管理框架（基于ThinkPHP）
 
-Document:http://pan.baidu.com/s/1gdCM4iJ
+Document: http://pan.baidu.com/s/1gdCM4iJ
 
-DEMO:http://hyframe.aihe.net.cn/demo/
+DEMO: http://hyframe.aihe.net.cn/demo/
+（ACCOUNT:123/PASSWORD:123123）
 
 # Overview
 框架基于ThinkPHP和Metronic二次封装，集成了众多现代特性（移动适配、AJAX为主），适用于多人协作开发中大型项目的后台管理框架。
@@ -32,7 +33,8 @@ DEMO:http://hyframe.aihe.net.cn/demo/
 在面临较大项目的开发时，多人合作是必须的。对此框架支持并鼓励用模块化思想开发，同时在权限验证、静态资源资源加载等方面，都做了特殊封装，可使得多人合作独立但不失统一！
 
 ### 框架性能及高并发的支持
-框架面向较为复杂的管理系统封装，特别注重并发问题。框架在缓存方面做了很多优化，SESSION默认存在数据库中，SESSION的数据量也很小，支持分布式数据库，此外ThinkPHP也支持SAE、BAE等平台。
+
+框架面向较为复杂的管理系统封装，特别注重并发问题。框架在缓存方面做了很多优化，合理利用CACHE，SESSION默认存在数据库中，SESSION的数据量也很小，支持分布式数据库，此外ThinkPHP也支持SAE、BAE等平台。
 
 # Get started
 ## 规范：
@@ -70,7 +72,8 @@ SESSION：框架默认将SESSION存在数据库中，在高并发、大容量下
 框架附带一个DEMO实例，可以更方便学习和更快上手！
 
 ## 框架文件结构
-JS：
+
+JavaScript：
 
   global/scripts/hyframe.js       框架基础JS库。提供了众多实用的jQuery Tools的扩展，也提供了针对框架的一些工具。
   
@@ -90,8 +93,6 @@ Controller：
   
   HyAll     管理页面控制器（如果需要遵循框架的统一入口，则自己的业务控制器继承此控制器）
   
-  HyBase    项目基础控制器（如有需要，可在此扩展自己项目的全局代码！）
-  
   HyFile    文件上传下载
   
   HyStart   项目入口，登录等
@@ -103,8 +104,6 @@ Model：
   HyFrame   框架基础模型：封装了对连表查询的简单而强大的支持
   
   HyAll     实现配置式编程，负责管理列表页及CRUD，自己的业务模型继承此模型
-  
-  HyBase    项目基础模型（可根据项目需要扩展）
   
   HyFile    文件上传下载
   
@@ -119,4 +118,3 @@ Model：
   HyLog     操作日志
   
   HyMail    站内邮件
-  
