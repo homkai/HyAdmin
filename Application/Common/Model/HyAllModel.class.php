@@ -288,7 +288,7 @@ abstract class HyAllModel  extends HyFrameModel{
 	 * AJAX入口
 	 * @param string $pk
 	 */
-	protected function ajax_detail($type){
+	public function ajax_detail($type){
 		$pk = act_decrypt(I('pk'));
 		// 权限检查
 		if(false===$this->checkPk($pk,'detail')) return false;
