@@ -55,7 +55,7 @@ class HyFrameController extends Controller {
 	 * 重写display方法，添加视图输出前标签位
 	 */
 	protected function display($templateFile='', $charset='', $contentType='', $content='', $prefix=''){
-		Hook::listen('view_before', $this);
+		Hook::listen('before_view', $this);
 		return parent::display($templateFile, $charset, $contentType, $content, $prefix);
 	}
 	/**

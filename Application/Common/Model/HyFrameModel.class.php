@@ -1,28 +1,46 @@
 <?php
 namespace Common\Model;
 use Think\Model;
-use Think\Exception;
 use Think\Hook;
 
 /**
- * HyFrame数据管理框架-数据操作扩展模型
+ * HyFrame数据管理框架 - 数据操作扩展模型
+ * 
+ * 扩展了对连表查询的简单强大支持
  * @author Homkai
  *
  */
 abstract class HyFrameModel extends Model {
 
-	// 默认连表当前表别名
+	/**
+	 * 连表时当前表的别名
+	 * @var string
+	 */
 	const HYP = 'hy';
-	// 框架SQL基础
+	
+	/**
+	 * 模型SQL基础配置
+	 * 
+	 * associate：连表定义（支持多表）
+	 * 
+	 * 'associate'=>array('user|user_id|id|name user_name,sex|`status`=1|LEFT')
+	 * 
+	 * 0-2=>表示 该表中的user_id字段与user表中的id关联
+	 * 
+	 * 3=>取出user表中的name（映射成 user_name）和sex字段（可选）
+	 * 
+	 * 4=>限制user表中的status字段为1（可选）
+	 * 
+	 * 5=>采用LEFT JOIN 默认INNER JOIN（可选）
+	 * 
+	 * where:array（查询条件，支持连表）、field:array（查询输出的字段） 同ThinkPHP
+	 * 
+	 * decrypt:boolean 对所有字段尝试解密
+	 * 
+	 * @var array
+	 */
 	protected $sqlOptions = array(
 			/**
-			 * 连表定义 支持多表
-			 * 'associate'=>array('user|user_id|id|name user_name,sex|`status`=1|LEFT')
-			 * 0-2=>表示 该表中的user_id字段与user表中的id关联
-			 * 3=>取出user表中的name（映射成 user_name）和sex字段（可选）
-			 * 4=>限制user表中的status字段为1（可选）
-			 * 5=>采用LEFT JOIN 默认INNER JOIN（可选）
-			 * 详见associate方法
 			 */
 			'associate'	=>	array(),
 			// 查询条件，支持连表：
@@ -32,15 +50,35 @@ abstract class HyFrameModel extends Model {
 			// 对所有字段尝试解密：
 			'decrypt'	=>	false
 	);
+	
+	/**
+	 * 允许新增插入的字段
+	 * @var array
+	 */
 	protected $insertFields;
+	
+	/**
+	 * 允许编辑更新的字段
+	 * @var array
+	 */
 	protected $updateFields;
-	// select、find查询后置方法集
+	
+	/**
+	 * select、find查询后置方法集
+	 * @var array
+	 */
 	protected $afterRead = array();
-	// associate数据
+	
+	/**
+	 * associate数据
+	 * @var array
+	 */ 
 	private $_associate = array();
 	
 	/**
 	 * 重写ThinkPHP Model构造方法
+	 * 
+	 * 添加_after_initialize 初始化后置方法
 	 */
 	public function __construct($name='', $tablePrefix='', $connection='') {
         // 模型初始化
@@ -70,7 +108,9 @@ abstract class HyFrameModel extends Model {
 	 */
 	protected function _after_initialize(){}
 	/**
-	 * select查询后置方法
+	 * 执行select查询后置方法集
+	 * @param array $result 查询结果集 引用型
+	 * @param array $options 查询参数
 	 */
 	protected function _after_select(&$result, $options){
 		if(!$this->afterRead) return;
@@ -81,7 +121,9 @@ abstract class HyFrameModel extends Model {
 		}
 	}
 	/**
-	 * find查询后置方法
+	 * 执行find查询后置方法集
+	 * @param array $result 查询结果集 引用型
+	 * @param array $options 查询参数
 	 */
 	protected function _after_find(&$result, $options){
 		if(!$this->afterRead) return;
@@ -90,59 +132,23 @@ abstract class HyFrameModel extends Model {
 		}
 	}
 	/**
-	 * SQL基础配置
-	 * @param kvArr $options
-	 */
-	protected function setSqlOptions($options=array(), $value='', $replace=false){
-		if(is_array($options)) {
-			$this->sqlOptions = $replace ? $options : array_merge($this->sqlOptions, $options);
-		}elseif(is_string($options)){
-			$this->sqlOptions[$options] = $value;
-		}
-	}
-	/**
-	 * 验证字段
-	 * @param smpArr|string $fields
-	 */
-	public function setUpdateFields($fields){
-		$this->updateFields = $fields;
-	}
-	/**
-	 * 验证字段
-	 * @param smpArr|string $fields
-	 */
-	public function getUpdateFields(){
-		return $this->updateFields;
-	}
-	/**
-	 * 验证字段
-	 * @param smpArr|string $fields
-	 */
-	public function setInsertFields($fields){
-		$this->insertFields = $fields;
-	}
-	/**
-	 * 验证字段
-	 * @param smpArr|string $fields
-	 */
-	public function getInsertFields(){
-		return $this->insertFields;
-	}
-	/**
-	 * 判断是否执行框架的模型方法
-	 * @param unknown $options
+	 * 判断是否执行框架的模型查询方法
+	 * @param array $options
 	 * @return boolean
 	 */
 	private function isCallHyFunc($options){
-		$hy = $options['hy'];
+		$hy = is_array($options) && $options['hy'];
 		$associate = $this->_associate || ($this->sqlOptions['associate'] && $hy) || $options['associate'];
-		return $associate || $hy ? array($hy, $associate) : false;
+		return ($associate || $hy) ? array($hy, $associate) : false;
 	}
 	/**
 	 * 重写select方法 以支持associate和sqlOptions
-	 * @access public
+	 * 
+	 * 如果传入了['hy'=>true]则模型SQL基础配置生效！
+	 * 如果调用了associate连贯操作，则会执行框架的连表查询
+	 * 
 	 * @param array $options 表达式参数
-	 * @return mixed
+	 * @return array
 	 */
 	public function select($options = array()) {
 		if(!$arr = $this->isCallHyFunc($options)) return parent::select($options);
@@ -254,7 +260,7 @@ abstract class HyFrameModel extends Model {
 	}
 	/**
 	 * 重写count方法 以支持associate和sqlOptions
-	 * @param string $field | hy
+	 * @param array|string $options count(['hy'=>true]) | count('id')
 	 */
 	public function count($options){
 		if(!$this->isCallHyFunc($options)) return parent::count($options);
@@ -262,6 +268,7 @@ abstract class HyFrameModel extends Model {
 	}
 	/**
 	 * 重写find方法 以支持associate和sqlOptions
+	 * @param array $options find(['hy'=>true])
 	 */
 	public function find($options){
 		if(!$this->isCallHyFunc($options)) return parent::find($options);		
@@ -270,9 +277,11 @@ abstract class HyFrameModel extends Model {
 	}
 	/**
 	 * 连表查询连贯操作 支持多次调用
+	 * 
+	 * array(user|user_id|id|name,sex|`status`=1|LEFT)
+	 * 0=>关联表名（支持别名），1=>当前表外键，2=>关联表主键，3=>要从关联表取出的字段（多个以“，”分隔），4=>限制条件（字段加``），5=>join类型（默认inner）
+	 * 
 	 * @param array $associate 
-	 * @example array(user|user_id|id|name,sex|`status`=1|LEFT)
-	 * @tutorial 0=>关联表名（支持别名），1=>当前表外键，2=>关联表主键，3=>要从关联表取出的字段（多个以“，”分隔），4=>限制条件（字段加``），5=>join类型（默认inner）
 	 */
 	public function associate($associate = array()){
 		if(is_array($associate)){
@@ -282,8 +291,8 @@ abstract class HyFrameModel extends Model {
 	}
 	/**
 	 * fields加前缀处理
-	 * @param string $str
-	 * @param string $pre
+	 * @param string $field 字段
+	 * @param string $pre 表别名
 	 * @return string
 	 */
 	private function fieldPre($field, $pre = ''){
@@ -304,8 +313,7 @@ abstract class HyFrameModel extends Model {
 	/**
 	 * 增加where条件 支持字符串和键值对
 	 * 当两次定义了某个字段的查询条件时，默认AND方式组合
-	 * @param string $k
-	 * @param array $v
+	 * @param array ['field'=>'condition']
 	 */
 	protected function addMap($map=''){
 		if(!$map) return;
@@ -331,13 +339,13 @@ abstract class HyFrameModel extends Model {
 	/**
 	 * 取得模型查询字段，自定义表别名
 	 *
-	 * @param smpArr $except
-	 * @param string $pre
-	 * @return string
+	 * @param array $custom 要别名处理的字段集，为空则取当前模型所有字段
+	 * @param string $pre 表别名
+	 * @return string|array
 	 */
 	protected function getAllFields($custom = array(), $pre = '') {
 		$fields = array();
-		if($custom && is_array($custom)){
+		if(is_array($custom) && $custom){
 			foreach ( $custom as $k => $v ) {
 				if(is_numeric($k)){
 					$v = strpos($v, '.') ? $v : "$pre.$v";

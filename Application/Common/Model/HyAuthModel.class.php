@@ -1,8 +1,9 @@
 <?php
 namespace Common\Model;
 use Think\Model;
+
 /**
- * 框架-菜单与权限模型
+ * 框架菜单与权限验证模型
  * @author Homkai
  *
  */

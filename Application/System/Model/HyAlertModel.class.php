@@ -8,9 +8,7 @@ use Common\Model\HyAllModel;
  *
  */
 class HyAlertModel extends HyAllModel{
-	
-	protected $tableName = 'frame_alert';
-
+		
 	/**
 	 * 提醒类型
 	 */
@@ -18,6 +16,13 @@ class HyAlertModel extends HyAllModel{
 			1=>'系统提醒',
 			2=>'管理员消息'
 	);
+	
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'frame_alert';
+	}
 	
 	/**
 	 * @overrides

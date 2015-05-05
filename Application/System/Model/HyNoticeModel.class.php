@@ -8,8 +8,13 @@ use Common\Model\HyAllModel;
  * @author Homkai
  */
 class HyNoticeModel extends HyAllModel {
-		
-	protected $tableName = 'frame_notice';
+	
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'frame_notice';
+	}
 	
 	/**
 	 * @overrides

@@ -1,11 +1,18 @@
 <?php 
 namespace Common\Behavior;
 use Think\Behavior;
+
 /**
- * 视图输出前
+ * 框架行为扩展 - 视图输出前
+ * @author Homkai
+ *
  */
-class ViewBeforeBehavior extends Behavior{
+class HyBeforeViewBehavior extends Behavior{
 	
+	/**
+	 * 行为入口
+	 * @see \Think\Behavior::run()
+	 */
 	public function run(&$the) {
 		$the->_assets = $this->loadAssets();
 		if(ss_uid()){
@@ -21,7 +28,10 @@ class ViewBeforeBehavior extends Behavior{
 	}
 	
 	/**
-	 * 载入静态资源
+	 * 载入静态资源文件
+	 * 
+	 * 需配置LOAD_ASSETS
+	 * 载入配置的CSS、JS等静态资源文件
 	 */
 	protected function loadAssets(){
 		if(is_array($assets = C('LOAD_ASSETS'))){

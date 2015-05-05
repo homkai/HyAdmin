@@ -8,8 +8,13 @@ use Common\Model\HyAllModel;
  * @author Homkai QQ:345887894
  */
 class ClassModel extends HyAllModel {
-	
-	protected $tableName = 'class';
+
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'class';
+	}
 	
 	/**
 	 * @overrides

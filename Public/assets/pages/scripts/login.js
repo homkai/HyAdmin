@@ -62,7 +62,7 @@ var Login = function () {
 	    			var account = $.trim($('[name="hy_username"]').val());
         			var pwd = crypto_sha1($.trim($('[name="hy_password"]').val())+$('#login-addon').val());
         			$.ajax({
-        				url: $.U('ajax?_query=login'),
+        				url: $.U('ajax?q=login'),
         				data: {u: crypto_aes(account, $('#login-key').val()), p: crypto_aes(pwd, pwd.substr(5, 32))},
         				type: 'POST',
         				timeout: 5000,
@@ -161,7 +161,7 @@ var Login = function () {
                         cenrerY: true,
                         boxed: true
                     });
-    				$.post($.U('ajax?_query=forgetSendVerify'), {u:crypto_aes($.trim($('[name="forget_username"]').val()), $('#login-key').val()),e:crypto_sha1($.trim($('[name="forget_email"]').val()))},function(r){
+    				$.post($.U('ajax?q=forgetSendVerify'), {u:crypto_aes($.trim($('[name="forget_username"]').val()), $('#login-key').val()),e:crypto_sha1($.trim($('[name="forget_email"]').val()))},function(r){
     					Metronic.unblockUI($('.forget-form'));
     					actionAlert(r,'.forget-form');
 	        			if(!r.status){
@@ -181,7 +181,7 @@ var Login = function () {
                         cenrerY: true,
                         boxed: true
                     });
-    				$.post($.U('ajax?_query=forgetRestPwd'), {u:crypto_base64($('[name="forget_username"]').val()),v:verify,p:crypto_sha1($.trim($('[name="forget_password"]').val()))},function(r){
+    				$.post($.U('ajax?q=forgetRestPwd'), {u:crypto_base64($('[name="forget_username"]').val()),v:verify,p:crypto_sha1($.trim($('[name="forget_password"]').val()))},function(r){
     	    			Metronic.unblockUI($('.forget-form'));
         				$('[name="forget_username"]').prop('disabled',false);
         				$('[name="forget_email"]').val('').prop('disabled',false);

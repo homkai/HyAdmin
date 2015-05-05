@@ -1,27 +1,228 @@
 <?php
 namespace Common\Model;
 use Think\Hook;
+
 /**
- * HyFrame数据管理框架-管理列表模型
- * @author Homkai QQ:345887894
- *
+ * HyFrame数据管理框架 - 管理页模型
+ * 
+ * 管理页列表显示、检索、删除、新增、编辑、详情弹窗等
+ * 
+ * @author Homkai
+ * @since 2014-9-25
+ * @version 2015-5-5 20:21:28
  */
 abstract class HyAllModel  extends HyFrameModel{
 	
-	// 模型基础信息
-	protected $infoOptions=array(
+	/**
+	 * 数据表名
+	 * @var string
+	 */
+	protected $tableName = '';
+	
+	/**
+	 * 模型基础信息
+	 * 
+	 * 'title'		=>	'' // 标题
+	 * 
+	 * 'subtitle'	=>	'' // 副标题
+	 * 
+	 * @var array
+	 */
+	protected $infoOptions = array(
 			'title'		=>	'',
 			'subtitle'	=>	''
 	);
-	// 字段配置信息
+	
+	/**
+	 * 字段配置信息
+	 *  
+	 *  说明：
+	 *  
+	 *  1、title可继承自上一级！（list.title = list.title ?: ROOT.title）
+	 *  
+	 *  2、如果无title则当前组无效（list = !list.title ? [] : list）
+	 *  
+	 *  3、表现类型：text|select|date|datetime|dateRange|textarea|file|html...
+	 *  
+	 *  4、callback：array类型，第一个参数为callback名，需当前模型以callback_[name]方法或者[name]的函数支持，第二个参数为当前的字段名（$key），第三个参数为当前上下文的数据集（$data），支持递归调用
+	 *  
+	 *  
+	 *  字段名 => 配置数组：
+	 *   
+	 * 	fieldName(ROOT) => [
+	 * 		 字段显示名称：
+	 * 		'title'	=>	''
+	 *		 数据表：
+	 * 		'table'	=>	''
+	 * 		 列表显示配置：
+	 * 		'list'	=>	[
+	 * 			 列表字段显示名称：
+	 * 			'title'		=>	''
+	 * 			 隐藏字段：
+	 * 			'hidden'	=>	boolean
+	 * 			 禁用排序：
+	 * 			'order'		=>	boolean
+	 * 			 排序字典：
+	 * 			'orderDir'	=>	''
+	 * 			 字段值回调方法：
+	 * 			'callback'	=>	''
+	 * 			 宽度：
+	 * 			'width'		=>	''
+	 * 			 样式：
+	 * 			'style'		=>	''
+	 * 			 检索配置：
+	 * 			'search'	=>	[
+	 * 				 检索字段显示名称：
+	 * 				'title'	=>	''
+	 * 				 检索表现类型（text|select|date...）：
+	 * 				'type'	=>	''
+	 * 				 SQL匹配方式（eq|like|lt|gt...）				 
+	 * 				'query'	=>	''
+	 * 				 自定义检索SQL字符串：
+	 * 				'sql'	=>	''
+	 * 				 自定义回调方法生成SQL：
+	 * 				'callback'=>[]
+	 * 			]
+	 * 		]
+	 * 		 表单显示配置：
+	 * 		'form' 	=>	[
+	 * 			 表单字段显示名称：
+	 * 			'title'		=>	''
+	 * 			 字段表现类型（text|select|date...）：
+	 * 			'type'		=>	''
+	 * 			 启用新增表单：
+	 * 			'add'		=>	boolean
+	 * 			 启用编辑表单：
+	 * 			'edit'		=>	boolean
+	 * 			 表单字段值回调方法：
+	 * 			'callback'	=>	[]
+	 * 			 表单验证规则：
+	 * 			'validate'	=>	[] // jQuery Validation Rules
+	 * 			 服务器端验证规则：
+	 * 			'server'	=>	[]
+	 * 			 表单额外属性：
+	 * 			'attr'		=>	''
+	 * 			 表单样式：
+	 * 			'style'		=>	''
+	 * 			 如果type为daterange类型，则需配置：
+	 * 			'daterange'	=>	[
+	 * 				 起始时间：
+	 * 				'from'	=>	''
+	 * 				 截止时间：
+	 * 				'to'	=>	''
+	 * 			]
+	 * 			 如果type为file类型，则可选配置：
+	 * 			'file'		=>	[
+	 * 				可接受文件扩展名：
+	 * 				'ext'	=>	''
+	 * 			]
+	 * 			 如果type为select培训，则可选配置：
+	 * 			'select'	=>	[
+	 * 				 是否支持多选：
+	 * 				'multiple'	=>	false
+	 * 				 是否支持新增其他选项：
+	 * 				'addon'		=>	false
+	 * 				 提示信息：
+	 * 				'first'		=>	''
+	 * 				 是否开启分组选择：
+	 * 				'optgroup'	=>	false
+	 * 			]
+	 * 			 字段填充：
+ 	 *			'fill'		=>	[
+ 	 *				 填充方式：
+	 * 				'both'|'edit'|'add'	=>	[] // callback
+	 * 			]
+	 * 		]
+	 * 	]
+	 * 					
+	 * @var array
+	 */
 	protected $fieldsOptions = array ();
-	// 列表显示配置
+	
+	/**
+	 * 管理页配置
+	 *
+	 *  配置说明：
+	 *
+	 * 	options => [
+	 *		 表格类型（暂时仅支持AJAX方式） ：
+	 *		'type'		=>	'ajax'
+	 *		 响应式表格开关 ：
+	 *		'dtResponsive'=>	true
+	 *		 物理删除 ：delete | 逻辑删除：status|9 （status为逻辑删除的字段，9为临界值）：
+	 *		'deleteType'=>	'delete',
+	 *		 分页限制（同ThinkPHP的limit） ：
+	 *		'limit'		=>	10,
+	 *		 字段排序开关 ：
+	 *		'sort'		=>	true,
+	 *		 默认排序字段（同ThinkPHP的order） ：
+	 *		'order'		=>	$this->getPk().' desc',
+	 *		 打印开关：
+	 *		'print'		=>	true,
+	 *		 导出 - xls(csv)、pdf：
+	 *		'export'		=>	'xls',
+	 *		 序号开关 ：
+	 *		'number'		=>	false,
+	 *		 显示全部 ：
+	 *		'all'		=>	true,
+	 *		 复选框 ：
+	 *		'checkbox'	=>	true,
+	 *		 操作成功刷新页面 ：
+	 *		'okRefresh'	=>	false,
+	 *		 操作组 ：
+	 *		'actions'	=>	[
+	 *			'edit'		=>	[
+	 *				'title'		=>	'编辑',
+	 *				'max'		=>	1 		// 同时操作的记录数
+	 *			],
+	 *			'delete'		=>	[
+	 *				'title'		=>	'删除',
+	 *				'confirm'	=>	true 	// 是否需要确认
+	 *			]
+	 *		],
+	 *		 按钮组 ：
+	 *		'buttons'	=>	[
+	 * 			'add'		=>	[
+	 * 				'title'		=>	'新增',
+	 * 				'icon'		=>	'fa-plus'
+	 * 			]
+	 *		],
+	 *		 表单弹窗尺寸：
+	 *		'formSize'	=>	'default',
+	 *		 多表数据写入 ：
+	 *		'tablesWrite'=>	false,
+	 *		 主键检查 ：
+	 *		'checkPk'	=>	[
+	 *			'edit'		=>	false,
+	 *			'delete'	=>	false,
+	 *			'detail'	=>	false
+	 *		],
+	 *		 详情模板 ：
+	 *		'detailTpl'	=>	'Common@HyFrame/detail',
+	 *		 编辑数据时重新发送pageOptions ：
+	 *		'editFields'	=>	false
+	 * 	]
+	 *
+	 * @var array
+	 */
 	protected $pageOptions	= array();
-	// 自定义面包屑
+	
+	/**
+	 * 自定义面包屑
+	 * 
+	 * 不同的操作对应不同的面包屑：ACTION_NAME=>''
+	 * @var array
+	 */
 	protected $breadcrumb = array();
 	
+	/**
+	 * 初始化方法
+	 * 
+	 * 定义管理页默认配置
+	 */
 	protected function _initialize(){
 		parent::_initialize();
+		$this->tableName = $this->initTableName();
 		$this->pageOptions = array(
 			// 表格类型
 			'type'		=>	'ajax',
@@ -37,8 +238,8 @@ abstract class HyAllModel  extends HyFrameModel{
 			'order'		=>	$this->getPk().' desc',
 			// 打印
 			'print'		=>	true,
-			// 导出 - CVS,PDF
-			'export'	=>	'',
+			// 导出 - xls(csv)、pdf
+			'export'	=>	'xls',
 			// 序号
 			'number'	=>	false,
 			// 显示全部
@@ -69,12 +270,15 @@ abstract class HyAllModel  extends HyFrameModel{
 			'formSize'		=>	'default',
 			// 多表数据写入
 			'tablesWrite'	=>	false,
+			// 主键检查
 			'checkPk'		=>	array(
 					'edit'		=>	false,
 					'delete'	=>	false,
 					'detail'	=>	false
 			),
+			// 详情模板
 			'detailTpl'		=>	'Common@HyFrame/detail',
+			// 编辑数据时重新发送pageOptions
 			'editFields'	=>	false
 		);
 	}
@@ -83,19 +287,23 @@ abstract class HyAllModel  extends HyFrameModel{
 	 */
 	protected function _after_initialize(){
 		parent::_after_initialize();
-		if(!$this->tableName) $this->tableName = $this->getTableNameHy();
 		$this->setInfoOptions($this->initInfoOptions());
 		$this->setFieldsOptions($this->initFieldsOptions());
 		$this->setPageOptions($this->initPageOptions());
 		$this->setSqlOptions($this->initSqlOptions());
 	}
 	/**
+	 * 指定数据表名
+	 * @return string
+	 */
+	protected abstract function initTableName();
+	/**
 	 * 指定模型基础配置
 	 * @return array
 	 */
 	protected abstract function initInfoOptions();
 	/**
-	 * 指定列表显示配置
+	 * 指定管理页配置
 	 * @return array
 	 */
 	protected abstract function initPageOptions();
@@ -110,8 +318,9 @@ abstract class HyAllModel  extends HyFrameModel{
 	 */
 	protected abstract function initSqlOptions();
 	/**
-	 * 列表页面配置
-	 * @param kvArr $options
+	 * 管理页面配置
+	 * @param array|string $options 整个配置项或某项的名称
+	 * @param string|array $value [配置的值]
 	 */
 	protected function setPageOptions($options=array(), $value=''){
 		if(is_array($options)) {
@@ -119,13 +328,11 @@ abstract class HyAllModel  extends HyFrameModel{
 		}elseif(is_string($options)){
 			$this->pageOptions[$options]=$value;
 		}
-		$this->getPageOptions();
 	}
 	/**
 	 * 获取页面配置
-	 * @param string $key 
-	 * 配置的键名
-	 * @return multitype:array|string
+	 * @param string $key 配置项的名称
+	 * @return array|string
 	 */
 	public function getPageOptions($key){
 		if($key) return $this->pageOptions[$key];
@@ -133,9 +340,10 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 字段信息配置
-	 * @param kvArr $options
+	 * @param array|string $options 整个配置项或某项的名称
+	 * @param string|array $value [配置的值]
 	 */
-	protected function setFieldsOptions($options=array(),$value=''){
+	protected function setFieldsOptions($options=array(), $value=''){
 		if(is_array($options)) {
 			$this->fieldsOptions = (true===$value) ? $options : array_merge($this->fieldsOptions,$options);
 		}elseif(is_string($options)){
@@ -149,13 +357,26 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 模型基础信息配置
-	 * @param kvArr $options
+	 * @param array|string $options 整个配置项或某项的名称
+	 * @param string|array $value [配置的值]
 	 */
-	protected function setInfoOptions($options=array(),$value=''){
+	protected function setInfoOptions($options=array(), $value=''){
 		if(is_array($options)) {
 			$this->infoOptions = (true===$value) ? $options : array_merge($this->infoOptions,$options);
 		}elseif(is_string($options)){
 			$this->infoOptions[$options]=$value;
+		}
+	}
+	/**
+	 * 模型SQL基础配置
+	 * @param array|string $options 整个配置项或某项的名称
+	 * @param string|array $value [配置的值]
+	 */
+	protected function setSqlOptions($options=array(), $value='', $replace=false){
+		if(is_array($options)) {
+			$this->sqlOptions = $replace ? $options : array_merge($this->sqlOptions, $options);
+		}elseif(is_string($options)){
+			$this->sqlOptions[$options] = $value;
 		}
 	}
 	/**
@@ -174,6 +395,8 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 输出字段配置信息
+	 * 
+	 * 自动过滤不易暴露的配置
 	 * @return array
 	 */
 	protected function packColumns(){
@@ -198,7 +421,9 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 列表页基础信息输出
-	 * @return twoArr
+	 * 
+	 * 自动过滤不易暴露的配置
+	 * @return array
 	 */
 	public function all(){
 		// 安全过滤
@@ -213,16 +438,21 @@ abstract class HyAllModel  extends HyFrameModel{
 		return $data;
 	}
 	/**
-	 * AJAX请求模型入口
-	 * 请在实现对应的 ajax_I('get._query') 方法
+	 * AJAX请求路由
+	 * 
+	 * 请在实现对应的 ajax_I('get.q') 方法
+	 * @param string $query 请求接口
+	 * @param array $json 要返回的数据，引用型传递
 	 */
-	public function ajaxs($query, &$json){
+	public function ajax($query, &$json){
 		call_user_func_array(array(&$this, 'ajax_'.$query), array(&$json));
 		$json['info'] = $json['info'] ?: $this->getError();
 	}
 	/**
+	 * 表单编辑数据响应
+	 * 
 	 * AJAX入口
-	 * @param array $json
+	 * @param array $json 引用型接收
 	 */
 	protected function ajax_edit(&$json){
 		$id = act_decrypt($en = I('pk'));
@@ -237,8 +467,10 @@ abstract class HyAllModel  extends HyFrameModel{
 			$json['columns'] = $this->packColumns();
 	}
 	/**
+	 * 表单提交（更新）数据处理
+	 * 
 	 * AJAX入口
-	 * @param array $json
+	 * @param array $json 引用型接收
 	 */
 	protected function ajax_update(&$json){
 		if(false === ($pk = token_validator(I('_token')))) {
@@ -253,8 +485,10 @@ abstract class HyAllModel  extends HyFrameModel{
 		$json['reload'] = $this->pageOptions['okRefresh'] ?: false;
 	}
 	/**
+	 * 表单提交（新增）数据处理
+	 * 
 	 * AJAX入口
-	 * @param array $json
+	 * @param array $json 引用型接收
 	 */
 	protected function ajax_insert(&$json){
 		$json['status'] = !!$this->insert();
@@ -262,8 +496,10 @@ abstract class HyAllModel  extends HyFrameModel{
 		$json['reload'] = $this->pageOptions['okRefresh'] ?: false;
 	}
 	/**
+	 * 列表删除数据处理
+	 * 
 	 * AJAX入口
-	 * @param array $json
+	 * @param array $json 引用型接收
 	 */
 	protected function ajax_delete(&$json){
 		if(!is_array($arr=explode(',', (I('pk'))))){
@@ -278,15 +514,19 @@ abstract class HyAllModel  extends HyFrameModel{
 		$json['info']=$json['status']?'记录删除成功！' : ($this->getError() ?: '删除记录失败！');
 	}
 	/**
+	 * 列表显示数据响应
+	 * 
 	 * AJAX入口
-	 * @param array $json
+	 * @param array $json 引用型接收
 	 */
 	protected function ajax_list(&$json){
 		$json = $this->getDtData();
 	}
 	/**
+	 * 详情弹窗数据响应
+	 * 
 	 * AJAX入口
-	 * @param string $pk
+	 * @param string $type 详情请求类型（用于支持一个管理页有多种详情弹窗，默认为空）
 	 */
 	public function ajax_detail($type){
 		$pk = act_decrypt(I('pk'));
@@ -295,10 +535,9 @@ abstract class HyAllModel  extends HyFrameModel{
 		$call = 'detail'.($type ? '_'.$type : '');
 		return call_user_func_array(array(&$this, $call), array($pk));
 	}
-	
 	/**
 	 * 列表页Datatables数据输出
-	 * @return json
+	 * @return array
 	 */
 	protected function getDtData(){
 		$records = array();
@@ -354,17 +593,17 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 编辑数据输出
-	 * @param unknown $pk
+	 * @param number $pk 要编辑记录的主键
 	 */
-	protected function edit($id){
+	protected function edit($pk){
 		$error = '无权访问要请求的数据！';
-		$pk = $this->getPk();
-		if(!$pk || !$id) return $this->setError($error);
+		$field = $this->getPk();
+		if(!$field || !$pk) return $this->setError($error);
 		// 数据访问检查
-		$value=$this->where(array($pk=>array('eq', $id)))->find('hy');
+		$value=$this->where(array($field=>array('eq', $pk)))->find('hy');
 		if(!$value) return $this->setError($error);
 		// 主键检查
-		if(false===$this->checkPk($id, 'edit')) return $this->setError($error);
+		if(false===$this->checkPk($pk, 'edit')) return $this->setError($error);
 		$log=array('msg'=>'数据描述：'.implode('|', $value), 'style'=>'text-info');
 		Hook::listen('hy_log', $log);
 		// 方法回调支持
@@ -380,6 +619,7 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 更新数据处理
+	 * @param number $pk 主键 
 	 */
 	protected function update($pk){
 		return $this->write('edit', $pk);
@@ -391,10 +631,11 @@ abstract class HyAllModel  extends HyFrameModel{
 		return $this->write('add');
 	}
 	/**
-	 * 插入数据处理
-	 * @param string $type add | edit
+	 * 写入数据处理（更新、新增）
+	 * @param string $type 类型：add | edit
+	 * @param number $pk 主键
 	 */
-	protected function write($type='',$pk=null){
+	protected function write($type='', $pk=null){
 		if(!$type) return false;
 		$data=I('post.');
 		$log=array('msg'=>'数据描述：'.implode('|', $data), 'style'=>'text-info');
@@ -506,7 +747,9 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 删除数据
-	 * @param smpArr $pk
+	 * 
+	 * 支持逻辑删除（详见HyAllModel:pageOptions->deleteType配置）
+	 * @param array $arr 要删除的主键或者主键数组
 	 */
 	protected function del($arr){
 		$error = '无权访问要请求的数据！';
@@ -527,10 +770,12 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 方法回调处理
+	 * 
+	 * 'callback'=>array('tplReplace','{:class_id_text}','<a href="#">{0}</a>',{#}) 通过$GLOBALS['callbackKey']可直接取$key
+	 * 
 	 * @param string $callback
 	 * @param string $key
 	 * @param array $data
-	 * @example 'callback'=>array('tplReplace','{:class_id_text}','<a href="#">{0}</a>',{#}) 通过$GLOBALS['callbackKey']可直接取$key
 	 */
 	private function callbackHandler($callback='', $key, $data=array()){
 		// 支持多级递归callback
@@ -653,9 +898,9 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 表单字段有效性检查
-	 * @param string $type
+	 * @param string $type 类型：add | edit
 	 */
-	protected function getFieldsToValidate($type='add'){
+	protected function getFieldsToValidate($type = 'add'){
 		$varValid= ('add'===$type) ? 'insertFields' : 'updateFields';
 		$this->$varValid = $this->$varValid ? (is_array($this->$varValid) ? $this->$varValid : explode(',', $this->$varValid)) : array();
 		if($this->$varValid) return;
@@ -787,6 +1032,11 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 回调方法-字段唯一性检查，支持编辑
+	 * @param string $val 字段的值
+	 * @param string $key 字段名称
+	 * @param array $data 表单的值
+	 * @param string|array $other 要验证的其他字段的值
+	 * @return boolean
 	 */
 	protected function callback_unique($val, $key, $data, $other){
 		$map = array($key=>$val);
@@ -805,14 +1055,21 @@ abstract class HyAllModel  extends HyFrameModel{
 		return !$this->where($map)->count();
 	}
 	/**
-	 * 回调方法-回调方法 模板替换
-	 * 调换{0}
+	 * 回调方法 - 模板替换
+	 * 替换{0}、{1}...
+	 * @param string|array $val 要替换成的值
+	 * @param string $tpl 模板
 	 */ 
 	protected function callback_tplReplace($val, $tpl){
+		if(is_array($val)){
+			preg_replace('/\{(\d+)\}/', function($m) use($val){
+				return $val[$m[1]];
+			}, $tpl);
+		}
 		return str_replace('{0}', $val, $tpl);
 	}
 	/**
-	 * 回调方法-加密字段检索回调
+	 * 回调方法 - 加密字段检索回调
 	 * @param string $val
 	 * @param string $field
 	 * @param string $query
@@ -827,7 +1084,7 @@ abstract class HyAllModel  extends HyFrameModel{
 		return array($field=>val_encrypt($val));
 	}
 	/**
-	 * 回调方法-检索加密的姓名
+	 * 回调方法 - 检索加密的姓名
 	 * @param string $val
 	 * @return string
 	 */
@@ -835,7 +1092,7 @@ abstract class HyAllModel  extends HyFrameModel{
 		return $this->callback_searchEncrypted($val, 'user.name');
 	}
 	/**
-	 * 回调方法-状态图标
+	 * 回调方法 - 状态图标
 	 * @param number $status
 	 * @param boolean $reverse
 	 * @param string $type
@@ -855,7 +1112,7 @@ abstract class HyAllModel  extends HyFrameModel{
 		}
 	}
 	/**
-	 * 回调方法-下载文件按钮
+	 * 回调方法 - 下载文件按钮
 	 * @param number $id
 	 * @return string
 	 */
@@ -865,28 +1122,35 @@ abstract class HyAllModel  extends HyFrameModel{
 		return '<a href="'.$url.'" title="下载文件" class="btn btn-xs green"><i class="fa fa-download"></i> 下载文件</a>';
 	}
 	/**
-	 * 回调方法-如果为空返回第二个参数
+	 * 回调方法 - 如果为空返回第二个参数
+	 * @param string $test 要评断真假的测试条件
+	 * @param string 如果为假则返回的值
 	 */
 	protected function callback_ifEmpty($test, $value) {
-		return $test ? $test : $value;
+		return $test ?: $value;
 	}
 	/**
-	 * 回调方法-返回第二个值
+	 * 回调方法 - 返回第二个值
+	 * @param string $null 占位参数
+	 * @param string $name 要返回的值
+	 * @param string $empty 如果$name为假则返回的值
 	 */
 	protected function callback_value($null, $name, $empty='') {
 		return $name ?: $empty;
 	}
 	/**
-	 * 回调方法-无HTML标签过滤
-	 * @return mixed
+	 * 回调方法 - 无HTML标签过滤
+	 * @return string
 	 */
 	protected function callback_content(){
 		return I($GLOBALS['callbackKey'], '', '');
 	}
 	/**
 	 * select选项 - status
-	 *
-	 * @return kvArr
+	 * 
+	 *	'1' => '正常',
+	 *	'00' => '禁用'
+	 * @return array
 	 */
 	protected function getOptions_status() {
 		return array (
@@ -896,8 +1160,10 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * select选项 - 是否
-	 *
-	 * @return kvArr
+	 * 
+	 * 	0 => '否',
+	 *	1 => '是'
+	 * @return array
 	 */
 	protected function getOptions_TF() {
 		return array (
@@ -907,8 +1173,10 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * select选项 - 性别
-	 *
-	 * @return kvArr
+	 * 
+	 *  '女' => '女',
+	 *	'男' => '男'
+	 * @return array
 	 */
 	protected function getOptions_sex() {
 		return array (

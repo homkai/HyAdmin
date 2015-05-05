@@ -9,8 +9,13 @@ use System\Model\HomkaiServiceModel;
  * @author Homkai QQ:345887894
  */
 class TeacherModel extends UserModel {
-	
-	protected $tableName = 'teacher';
+
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'teacher';
+	}
 	
 	/**
 	 * @overrides

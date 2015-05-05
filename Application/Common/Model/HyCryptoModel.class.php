@@ -1,5 +1,11 @@
 <?php
 namespace Common\Model;
+
+/**
+ * 框架数据加密处理模型
+ * @author Homkai
+ *
+ */
 class HyCryptoModel{
 
 	/**

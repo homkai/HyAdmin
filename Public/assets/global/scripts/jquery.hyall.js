@@ -544,20 +544,40 @@ jQuery.fn.hyall = function(config){
 	    	dtBtmActions+='<a href="javascript:;" data-value="'+k+'" data-confirm="'+(v.confirm ? 'true' : 'false')+'" '+(v.max ? 'title="每次只可'+v.title+v.max+'条记录！"' : '')+' data-max="'+(v.max || -1)+'" class="btn btn-default disabled" >'+v.title+'</a>';
 	    });
 	    dtBtmActions='<div class="dt-btm-actions btn-group">'+dtBtmActions+'</div>&nbsp;<span></span>';
-		// init datatable
+	    if(config.options['export'] || config.options.print){
+			var tools =  {
+            	tableTools: {
+                    aButtons: []
+                },
+            };
+			if(config.options['export']) {
+				tools.tableTools.aButtons.push({
+	                sExtends: config.options['export'],
+	                sButtonText: '<i class="fa fa-share fa-fw"></i>导出'
+	            });
+				tools.tableTools.sSwfPath = Metronic.getGlobalPluginsPath()+'datatables/extensions/TableTools/swf/copy_csv_xls' + ('pdf'===config.options['export'] ? '_pdf' : '') + '.swf';
+			}
+			if(config.options.print) tools.tableTools.aButtons.push({
+                sExtends: "print",
+                sButtonText: '<i class="fa fa-print fa-fw"></i>打印',
+                sInfo: '请按"CTR+P"打印表格，或按"ESC"退出打印！',
+                sMessage: "数据由系统自动生成"
+            });
+		}
+	    // init datatable
         dt.init($.extend(true, {
         	hyall: the, 
             src: '.hy-table-container table',
             dtSearchForm:dtSearchForm,
             dtBtmActions:dtBtmActions,
-            dataTable: {
+            dataTable: $.extend({
                 lengthMenu: lengthMenu,
                 pageLength: lengthMenu[0][0],
                 ajax: {
                 	url: $.U('ajax?q=list')
                 },
                 columns: dtColumns
-            }
+            }, tools ? tools : {})
         }, dtOptions));
         $dtContainer = dt.getTableContainer()
         if(!config.options.checkbox) {

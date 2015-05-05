@@ -1,11 +1,18 @@
 <?php 
 namespace Common\Behavior;
 use Think\Behavior;
+
 /**
- * 记录操作日志
+ * 框架行为扩展 - 记录操作日志
+ * @author Homkai
+ *
  */
 class HyLogBehavior extends Behavior{
 	
+	/**
+	 * 行为入口
+	 * @see \Think\Behavior::run()
+	 */
 	public function run(&$params) {
 		if(!isset($GLOBALS['logStep'])){
 			$GLOBALS['logStep'] = array('description'=>'', 'sql'=>'');

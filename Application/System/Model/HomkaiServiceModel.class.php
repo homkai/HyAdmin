@@ -1,13 +1,15 @@
 <?php
-/**
- * Homkai's Service Model
- */
 namespace System\Model;
 
+/**
+ * Homkai's Service Model
+ * @author Homkai
+ */
 class HomkaiServiceModel{
 	
 	/**
 	 * 分组下拉框 - 班级
+	 * @param $clsArr 班级范围数组
 	 * @return array
 	 */
 	public static function getClassOptg($clsArr){
@@ -22,8 +24,8 @@ class HomkaiServiceModel{
 		return $data;
 	}
 	/**
-	 * 用户头像
-	 * @param number $id
+	 * 用户头像HTML
+	 * @param number $id 头像fileId
 	 * @return string
 	 */
 	public static function getAvatarTpl($id){

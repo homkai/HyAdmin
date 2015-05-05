@@ -9,7 +9,12 @@ use Common\Model\HyAllModel;
  */
 class UserModel extends HyAllModel {
 	
-	protected $tableName = 'user';
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'user';
+	}
 	
 	/**
 	 * @overrides

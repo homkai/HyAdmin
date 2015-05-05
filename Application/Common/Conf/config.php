@@ -107,4 +107,6 @@ return array_merge( $db = array(
 
 		// 单点登录：
 		'SINGLE_POINT_ONLINE'	=>	false,
+		
+		'LOAD_EXT_FILE'			=>	'hyframe',
 ) );

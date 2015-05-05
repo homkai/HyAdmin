@@ -4,5 +4,5 @@ return array(
 		'action_end'	=>	array('Common\\Behavior\\HyLogBehavior'),
 		'hy_log'		=>	array('Common\\Behavior\\HyLogBehavior'),
 		'hy_filter'		=>	array('Common\\Behavior\\HyFilterWordsBehavior'),
-		'view_before'	=>	array('Common\\Behavior\\ViewBeforeBehavior'),
+		'before_view'	=>	array('Common\\Behavior\\HyBeforeViewBehavior'),
 );

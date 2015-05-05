@@ -4,17 +4,26 @@ use Think\Hook;
 use Common\Model\HyAllModel;
 
 class HyChatModel extends HyAllModel{
+
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'frame_chat';
+	}
 	
-	protected $tableName = 'frame_chat';
-	
-	protected function initFieldsOptions(){}
-	protected function initInfoOptions(){}
+	/**
+	 * @overrides
+	 */
 	protected function initSqlOptions(){
 		return array(
 				'associate'=>array('user|user_id|id|id user_id,name user_id_text,avatar_file|`college_id`='.ss_clgid()),
 				'field'=>'id,content,create_time',
 		);
 	}
+	
+	protected function initFieldsOptions(){}
+	protected function initInfoOptions(){}
 	protected function initPageOptions(){}
 
 	protected function ajax_list(&$json){

@@ -31,7 +31,7 @@ class HyStartController extends HyFrameController {
 		}
 	}
 	/**
-	 * KeepOnline
+	 * 保持在线
 	 */
 	public function online(){
 		$json['status'] = false;
@@ -49,13 +49,15 @@ class HyStartController extends HyFrameController {
 		}
 		$this->ajaxReturn($json);
 	}
-	
+	/**
+	 * AJAX入口
+	 */
 	public function ajax(){
 		$logStep .= "登录验证";
 		$json = array('status'=>false, 'info'=>'', 'data'=>'');
 		$u = aes_decrypt_base(I('u'), session('LOGIN_KEY'));
 		$this->model = new HyAccountModel();
-		switch(I('get._query')){
+		switch(I('get.q')){
 			// 登录验证
 			case 'login':
 				if(!$user = $this->model->login($u)) {
@@ -92,9 +94,11 @@ class HyStartController extends HyFrameController {
 				$this->model->save($data);
 				// 用户信息缓存
 				session('userId', $user['id']);
-				session('collegeId', $user['college_id']);
 				session('userName', $user['name']);
 				session('avatarFile', avatar_file($user['avatar_file']));
+				// 登录成功后置方法
+				$this->model->onLoginPass($user);
+				// 角色信息缓存
 				$roleIdArr = array_unique(explode(',', trim($user['roles'], ',')));
 				session('roleIdArr', $roleIdArr);
 				$this->roleCache($roleIdArr[0]);
@@ -102,23 +106,23 @@ class HyStartController extends HyFrameController {
 				break;
 				// 忘记密码 - 发送验证码
 			case 'forgetSendVerify':
-				$email=trim(I('e'));
-				$user=$this->model->where(array('user_no'=>$u,'status'=>1))->find();
+				$email = trim(I('e'));
+				$user = $this->model->where(array('user_no'=>$u,'status'=>1))->find();
 				if(!$user){
-					$json['info']='账号不存在或已禁用！';
+					$json['info'] = '账号不存在或已禁用！';
 					break;
 				}
 				if(sha1(val_decrypt($user['email']))!=$email) {
-					$logStep.=" >> <span class='text-warning'>忘记密码重置 - 邮箱验证失败！</span>";
-					$json['info']='您输入的邮箱地址与系统中保存的不一致，如有异议可联系辅导员！';
+					$logStep .= " >> <span class='text-warning'>忘记密码重置 - 邮箱验证失败！</span>";
+					$json['info'] = '您输入的邮箱地址与系统中保存的不一致，如有异议可联系辅导员！';
 					break;
 				}
 				if(!preg_match('/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/', $user['email'])){
-					$logStep.=" >> <span class='text-warning'>忘记密码重置 - 系统中的邮箱不合法！</span>";
-					$json['info']='邮箱地址不合法！';
+					$logStep .= " >> <span class='text-warning'>忘记密码重置 - 系统中的邮箱不合法！</span>";
+					$json['info'] = '邮箱地址不合法！';
 					break;
 				}
-				if(!$verify=D('HyAccount')->forgetPwdSendVerify($user['email'])) {
+				if(!$verify = $this->model->forgetPwdSendVerify($user['email'])) {
 					$json['info'] = '邮件发送失败，请稍后重试！';
 					break;
 				}
@@ -175,26 +179,8 @@ class HyStartController extends HyFrameController {
 		$roleSwitch = array_reverse($roleSwitch);
 		session('roleSwitch', $roleSwitch);
 		session('roleTitle', $role['title']);
-		switch ($role['table']){
-			case 'student':
-				session('student', true);
-				session('teacher', false);
-				$belong=M($role['table'])->where(array('user_id'=>ss_uid()))->getField('class_id');
-				session('classId', $belong);
-				if('class' == $role['name']){
-					session('userJob', D('StudentCadre')->getCadreJob(ss_uid()));
-				}
-				break;
-			case 'teacher':
-				session('student', false);
-				session('teacher', true);
-				if('instructor' == $role['name']){
-					session('myClassArr', M('instructor')->where(array('teacher_id'=>ss_uid()))->getField('class_id',true));
-					session('userJob',$belong['job']);
-				}
-				break;
-		}
-		session('collegeName', M('college')->getFieldById(session('collegeId'), 'name'));
+		// 角色切换后置方法
+		D('HyAccount')->onRoleSwitch($role);
 		HyAuthModel::cacheAccess($roleId);
 	}
 	

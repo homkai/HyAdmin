@@ -73,18 +73,6 @@ var Datatable = function() {
                     autoWidth: false, // disable fixed width and enable fluid table
                     processing: false, // enable/disable display message box on record load
                     serverSide: true, // enable/disable server side ajax loading
-                    tableTools: {
-                        sSwfPath: Metronic.getGlobalPluginsPath()+'datatables/extensions/TableTools/swf/copy_csv_xls.swf',
-                        aButtons: [{
-                            sExtends: "xls",
-                            sButtonText: '<i class="fa fa-share fa-fw"></i>导出'
-                        }, {
-                            sExtends: "print",
-                            sButtonText: '<i class="fa fa-print fa-fw"></i>打印',
-                            sInfo: '请按"CTR+P"打印表格，或按"ESC"退出打印！',
-                            sMessage: "数据由系统自动生成"
-                        }]
-                    },
                     deferRender: true,
                     ajax: { // define ajax settings
                         url: "", // ajax URL

@@ -4,7 +4,12 @@ use Common\Model\HyAllModel;
 
 class HyLogModel extends HyAllModel{
 	
-	protected $tableName = 'frame_log';
+	/**
+	 * @overrides
+	 */
+	protected function initTableName(){
+		return 'frame_log';
+	}
 	
 	/**
 	 * @overrides
