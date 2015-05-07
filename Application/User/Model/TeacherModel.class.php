@@ -61,7 +61,7 @@ class TeacherModel extends UserModel {
 				'tips'		=> array(
 						'add'	=> '新增用户初始密码123456'
 				),
-				'order'		=>	'login_last_time desc',
+				'order'		=>	'user.login_last_time desc',
 				'tablesWrite'=>array(
 						'user'=>'id',
 						$this->getTableNameHy()=>array('user_id'=>'user')

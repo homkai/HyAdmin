@@ -8,8 +8,6 @@ use Think\Hook;
  * 管理页列表显示、检索、删除、新增、编辑、详情弹窗等
  * 
  * @author Homkai
- * @since 2014-9-25
- * @version 2015-5-5 20:21:28
  */
 abstract class HyAllModel  extends HyFrameModel{
 	
@@ -44,28 +42,30 @@ abstract class HyAllModel  extends HyFrameModel{
 	 *  
 	 *  3、表现类型：text|select|date|datetime|dateRange|textarea|file|html...
 	 *  
-	 *  4、callback：array类型，第一个参数为callback名，需当前模型以callback_[name]方法或者[name]的函数支持，第二个参数为当前的字段名（$key），第三个参数为当前上下文的数据集（$data），支持递归调用
+	 *  4、callback：array类型，第一个参数为callback名，默认传入回调方法的第一个参数为自身，可通过{#}指定自身的参数位置，可通过{:field}获取其他字段的值
+	 *  array('tplReplace','{:class_id_text}','<a href="#">{0}</a>',{#})
+	 *  通过$GLOBALS['callbackKey']可直接取$key，支持递归调用
 	 *  
+	 *  5、field、order、associate等出现字段的地方，如果为当前表的字段，会自动判断是否连表，对于连表的情况会自动加上当前表别名以避免冲突。
+	 *  如果情况复杂，如使用了函数，则当前表的字段应加上``，如果非当前表的字段，必须加上表名
 	 *  
 	 *  字段名 => 配置数组：
 	 *   
 	 * 	fieldName(ROOT) => [
 	 * 		 字段显示名称：
 	 * 		'title'	=>	''
-	 *		 数据表：
+	 * 		 数据表：
 	 * 		'table'	=>	''
 	 * 		 列表显示配置：
 	 * 		'list'	=>	[
 	 * 			 列表字段显示名称：
 	 * 			'title'		=>	''
 	 * 			 隐藏字段：
-	 * 			'hidden'	=>	boolean
-	 * 			 禁用排序：
-	 * 			'order'		=>	boolean
-	 * 			 排序字典：
-	 * 			'orderDir'	=>	''
+	 * 			'hidden'	=>	false
+	 * 			 排序（为false则关闭排序，字符串为自定义排序，如排序字典）：
+	 * 			'order'		=>	true
 	 * 			 字段值回调方法：
-	 * 			'callback'	=>	''
+	 * 			'callback'	=>	[]
 	 * 			 宽度：
 	 * 			'width'		=>	''
 	 * 			 样式：
@@ -128,7 +128,7 @@ abstract class HyAllModel  extends HyFrameModel{
 	 * 				'optgroup'	=>	false
 	 * 			]
 	 * 			 字段填充：
- 	 *			'fill'		=>	[
+ 	 * 			'fill'		=>	[
  	 *				 填充方式：
 	 * 				'both'|'edit'|'add'	=>	[] // callback
 	 * 			]
@@ -297,26 +297,39 @@ abstract class HyAllModel  extends HyFrameModel{
 	 * @return string
 	 */
 	protected abstract function initTableName();
+	
 	/**
 	 * 指定模型基础配置
+	 * 
+	 * 参考self::$infoOptions
 	 * @return array
 	 */
 	protected abstract function initInfoOptions();
+	
 	/**
 	 * 指定管理页配置
+	 * 
+	 * 参考self::$pageOptions
 	 * @return array
 	 */
 	protected abstract function initPageOptions();
+	
 	/**
 	 * 指定字段显示配置
+	 * 
+	 * 参考self::$fieldsOptions
 	 * @return array
 	 */
 	protected abstract function initFieldsOptions();
+	
 	/**
 	 * 指定SQL基础配置
+	 * 
+	 * 参考HyFrameModel::$sqlOptions
 	 * @return array
 	 */
 	protected abstract function initSqlOptions();
+	
 	/**
 	 * 管理页面配置
 	 * @param array|string $options 整个配置项或某项的名称
@@ -553,20 +566,21 @@ abstract class HyAllModel  extends HyFrameModel{
 		if($draw>1) {
 			// 字段排序
 			$order = I('order');
-			if(0 !== strpos($order['field'], '_')){
+			if(0 !== strpos($order['field'], '_') && false!==($_order=$this->fieldsOptions[$order['field']]['list']['order'])){
 				$table = $this->fieldsOptions[$order['field']]['table'];
-				$this->pageOptions['order'] = ($this->fieldsOptions[$order['field']]['list']['order'] ?: ($table ? $table.'.' : '').$order['field']).' '.$order['sort'];
+				$this->pageOptions['order'] = (is_string($_order) ? $_order : ($table ? $table.'.' : '').$order['field']).' '.$order['sort'];
 			}
 			$this->pageOptions['limit'] = "$offset,$limit";
+		}
+		if($this->sqlOptions['associate'] && is_string($this->pageOptions['order'])){
+			$this->pageOptions['order'] = $this->fieldPre($this->pageOptions['order'], self::HYP);
 		}
 		$data = array();
 		if($total) $data = $this->scope('lists')->order($this->pageOptions['order'])->limit($this->pageOptions['limit'])->select();
 		//=============<Debug begin>===========
-// 		dump($this);
-// 		echo $th
-// 		echo $this->_sql();
-// 		$records['select']=dump($data);
-// 		die;
+// 		$records['sql'] = $this->_sql();
+// 		$records['select'] = $data;
+// 		$records['model'] = $this;
 		//=============<Debug end>=============
 		$valid = array();
 		foreach ($this->fieldsOptions as $k=>$v){
@@ -803,8 +817,8 @@ abstract class HyAllModel  extends HyFrameModel{
 	}
 	/**
 	 * 动态隐藏某些字段
-	 * @param string [fieldName],[fieldName]
-	 * @param string list | form | add | edit
+	 * @param string $str [fieldName],[fieldName]
+	 * @param string $type list|form|add|edit
 	 */
 	public function setFieldsHidden($str, $type='list') {
 		$arr = explode(',', $str);

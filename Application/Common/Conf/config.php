@@ -39,8 +39,7 @@ return array_merge( $db = array(
 		// 缓存方式，可根据自己服务器情况设定：
 		'DATA_CACHE_TYPE'       =>  'File',
 		'DATA_CACHE_PATH'       =>  RUNTIME_PATH.'Temp/Cache',
-		'DATA_CACHE_TIME'       =>  60*60*12,
-		
+		'DATA_CACHE_TIME'       =>  30*60*60,
 		
 	// 文件上传相关配置 
 		'FILE_UPLOAD' => array(

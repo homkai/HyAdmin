@@ -78,7 +78,7 @@ class ClassModel extends HyAllModel {
 				'name' => array (
 						'title' => '名称',
 						'list' => array (
-								'orderdir' => 'CONVERT(name USING gbk)',
+								'order' => 'CONVERT(`name` USING gbk)',
 								'callback'=>array('tplReplace', C('TPL_DETAIL_BTN')),
 								'search' => array (
 										'query' => 'like' 

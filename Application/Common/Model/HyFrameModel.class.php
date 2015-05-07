@@ -161,10 +161,8 @@ abstract class HyFrameModel extends Model {
 		// 收集order
 		if($order = $this->options['order'] ?: ($hy ? $this->pageOptions['order'] : null)){
 			// 排序字段自动加表别名以避免冲突
-			if($associate && $hy && $order && is_string($order) && false===strpos($order, '(')){
-				$order = implode(',', array_map(function($v){
-					return false!==strpos($v, '.') ? $v : self::HYP.'.'.ltrim($v,' ');
-				}, explode(',', $order)));
+			if($associate && is_string($order)){
+				$order = $this->fieldPre($order, self::HYP);
 			}
 			$this->options['order'] = $order;
 		}
@@ -295,7 +293,7 @@ abstract class HyFrameModel extends Model {
 	 * @param string $pre 表别名
 	 * @return string
 	 */
-	private function fieldPre($field, $pre = ''){
+	protected function fieldPre($field, $pre = ''){
 		if($pre) $pre .= '.';
 		if(!preg_match('/(\(|\,|\.)/', $field)){
 			$field = $pre.ltrim($field, ' ');
