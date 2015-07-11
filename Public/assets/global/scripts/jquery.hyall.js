@@ -10,12 +10,10 @@ jQuery.fn.hyall = function(config){
 	var $formValidator = {}; //表单验证JQ载体
 	var $formModal = {}; // HyAll 页面  modal JQ对象
 	var the = this; //全局对象
+	var _once = {}; //单次
 		
 	this.initialized = false;
-	this.config = config,
-	this.allModalObservers = [],
-	this.detailModalObservers = [];
-    this.initObservers = [];
+	this.config = config;
     
 	/**
 	 * 上传文件扩展名对应 MINE type
@@ -84,6 +82,7 @@ jQuery.fn.hyall = function(config){
 	 * options:{form, rules, hy:true|false, onComplete:callback}
 	 */ 
 	this.validateFormHandler = function(options) {
+    	the.trigger('validate.hyall.form');
         $formValidator = options.form;
         var error = $('.alert-danger', $formValidator);
         var success = $('.alert-success', $formValidator);	    	
@@ -252,6 +251,7 @@ jQuery.fn.hyall = function(config){
      * 表单生成器
      */ 
     this.formBuilder = function(columns, val, hidden, type){
+    	the.trigger('build.hyall.form');
     	var html = '';
     	if(!val) val = false;
     	if(hidden)
@@ -310,16 +310,25 @@ jQuery.fn.hyall = function(config){
 			the.setModal(tpl);
     	    if(the.config.options.tips.add) $modal.find('.alert-tips').show().find('span').html(the.config.options.tips.add);
     	    the.validateFormHandler({form: $modal.find('form'), rules: build.rules, hy: true});
-    		$modal.on('shown.bs.modal',function(){
-    			the.trigger('shown.hyall.form.add');
-    		});
+    	    if(!_once.initAdd){
+    	    	_once.initAdd = true;
+	    		$modal.on('show.bs.modal', function(){
+	    			the.trigger('show.hyall.form.add');
+	    		});
+	    		$modal.on('shown.bs.modal', function(){
+	    			the.trigger('shown.hyall.form.add');
+	    		});
+	    		$modal.on('hide.bs.modal', function(){
+	    			the.trigger('hide.hyall.form.add');
+	    		});
+	    		$modal.on('hidden.bs.modal', function(){
+	    			the.trigger('hidden.hyall.form.add');
+	    		});
+    	    }
 			$modal.modal('toggle');
     	},
     	initDetail: function(data, tpl, $con, baseURL){
     		var $modal=$('.hy-detail-modal', the);
-    		$modal.on('hide.bs.modal',function(){
-    			the.detailModalObservers=[];
-    		});
     		var doLoad = function(data,tpl){
                 $.loading();
                 tpl=$.extend({
@@ -343,11 +352,21 @@ jQuery.fn.hyall = function(config){
         				tpl.modal = (tpl.modal || data.type || 'default');
         				tpl.body.main=html;
         				$modal.html(HyFrame.tplRplRecursive(tpl));
-        				var once=0;
-                		$modal.on('shown.bs.modal',function(){
-                			if(once++) return;
-                			if(data.type) the.trigger('shown.hyall.detail.'+data.type);
-                		});
+                		if(!_once.initDetail){
+    	        	    	_once.initDetail = true;
+    	        			$modal.on('show.bs.modal', function(){
+                    			the.trigger('show.hyall.detail'+ data.type ? '.'+data.type : '');
+    		        		});
+                    		$modal.on('shown.bs.modal',function(){
+                    			the.trigger('shown.hyall.detail'+ data.type ? '.'+data.type : '');
+                    		});
+    		        		$modal.on('hide.bs.modal', function(){
+                    			the.trigger('hide.hyall.detail'+ data.type ? '.'+data.type : '');
+    		        		});
+    		        		$modal.on('hidden.bs.modal', function(){
+                    			the.trigger('hidden.hyall.detail'+ data.type ? '.'+data.type : '');
+    		        		});
+    	        		}
         				$modal.modal('show');
     				}else{
     					$con.html(html);
@@ -407,9 +426,21 @@ jQuery.fn.hyall = function(config){
         			the.setModal(tpl);
             	    the.validateFormHandler({form: $modal.find('form'), rules: build.rules, hy: true});
 	        	    if(the.config.options.tips.edit) $modal.find('.alert-tips').show().find('span').html(the.config.options.tips.edit);
-	        		$modal.on('shown.bs.modal',function(){
-	        			the.trigger('shown.hyall.form.edit');
-	        		});
+	        	    if(!_once.initEdit){
+	        	    	_once.initEdit = true;
+	        			$modal.on('show.bs.modal', function(){
+		        			the.trigger('show.hyall.form.edit');
+		        		});
+		        		$modal.on('shown.bs.modal', function(){
+		        			the.trigger('shown.hyall.form.edit');
+		        		});
+		        		$modal.on('hide.bs.modal', function(){
+		        			the.trigger('hide.hyall.form.edit');
+		        		});
+		        		$modal.on('hidden.bs.modal', function(){
+		        			the.trigger('hidden.hyall.form.edit');
+		        		});
+	        		}
 	        	    $modal.modal('toggle');
     	    	});
     	    });
@@ -638,12 +669,22 @@ jQuery.fn.hyall = function(config){
 	    	HyFrame.uploadHandler();
 	    	HyFrame.initAJAX();
 	    });
+		$modal.on('show.bs.modal',function(){
+			the.trigger('show.hyall.form');
+		});
 		$modal.on('shown.bs.modal',function(){
 			the.trigger('shown.hyall.form');
+		});
+		$modal.on('hide.bs.modal',function(){
+			the.trigger('hide.hyall.form');
+		});
+		$modal.on('hidden.bs.modal',function(){
+			the.trigger('hidden.hyall.form');
 		});
 	    // init hy-detail
 	    the.actionsHandlers.initDetail();
 	    the.initialized = true;
+		the.trigger('initialized.hyall');
 	    return the;
 	};
 	/**
