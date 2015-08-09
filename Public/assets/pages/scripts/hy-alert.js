@@ -9,7 +9,7 @@ var HyAlert = function(){
 	var setRead = function(){
 		$hyall.actionsHandlers.actionRead = function(rows){
 			$.post($.U('ajax?q=read'), {pk: rows.join(',')}, function(r){
-				$hyall.actionAlert(r);
+                $hyall.dtActionAlert(r);
 			});
 		};
 	};

@@ -105,21 +105,24 @@ class UserModel extends HyAllModel {
 		}
 		$json['info']=($json['status'] ? '默认角色修改成功！' : ($this->getError() ?: '默认角色修改失败！'));
 	}
-	/**
-	 * 个人密码修改入口
-	 * @param array $json
-	 */
-	public function ajax_pwdMe(&$json){
-		$aM=D('HyAccount');
-		$this->updateFields[]='password';
-		if(sha1(I('old_password'))!=$aM->pwdDecrypt($this->getFieldById(ss_uid(),'password'))){
-			$json['info']='旧密码输入有误！';
-			return false;
-		}
-		$_POST['password']=$aM->pwdEncrypt(trim(I('password')));
-		$json['status']=!!$this->update(ss_uid());
-		$json['info']=($json['status'] ? '密码修改成功！' : ($this->getError() ?: '密码修改失败！'));
-	}
+    /**
+     * 个人密码修改入口
+     * @param array $json
+     */
+    public function ajax_pwdMe(&$json){
+        $aM=new HyAccountModel();
+        $this->updateFields[]='password';
+        $p = $aM->pwdDecrypt($this->getFieldById(ss_uid(),'password'));
+        $key = substr($p, 5, 32);
+        $true = aes_decrypt_base(I('p'), $key);
+        if($true!=$p){
+            $json['info']='旧密码输入有误！';
+            return false;
+        }
+        $_POST['password']=$aM->pwdEncrypt(trim(I('password')));
+        $json['status']=!!$this->update(ss_uid());
+        $json['info']=($json['status'] ? '密码修改成功！' : ($this->getError() ?: '密码修改失败！'));
+    }
 	/**
 	 * 更新roles授权
 	 */
