@@ -1,0 +1,112 @@
+<extend name="Common@HyFrame:frameset" />
+<block name="title">国际教育学院后台&nbsp;<small>简洁、流畅、安全、自适应移动设备</small></block>
+<block name="breadcrumb">
+    <ul class="page-breadcrumb">
+        <li><i class="fa fa-home"></i> <a href="__ROOT__">首页</a> <i class="fa fa-angle-right"></i></li>
+        <li><a href="javascript:;">excel导入数据库</a></li>
+    </ul>
+</block>
+<block name="toolbar"></block>
+<block name="main">
+
+    <form action="javascript:;" class="form-horizontal form-bordered" id="excel-form">
+        <div class="form-body">
+            <div class="form-group">
+                <div class="col-md-12 col-sm-10">
+                    <div class="hy-upload display-none" data-field="file_id" style="display: block;">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-2">
+                                <div class="b-upload__hint">请先选择文件</div>
+                                <div class="js-files b-upload__files"></div>
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                <div class="btn blue btn-small js-fileapi-wrapper js-browse btn-select">
+                                    <span>选择</span>
+                                    <input type="file" name="filedata" accept="undefined">
+                                    <input type="hidden" name="file_id">
+                                </div>
+                                <div class="js-upload btn purple btn-small btn-upload" aria-disabled="disabled" style="display: none;">
+                                    <span>上传</span>
+                                </div>
+                                <button type="submit" class="btn purple excel-import"><i class="fa fa-check"></i>确定导入</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-md-6">
+            <!-- BEGIN Portlet PORTLET-->
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-gift"></i>重复导入的学生的学号汇总
+                    </div>
+
+                </div>
+                <div class="portlet-body">
+                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><div class="scroller" style="height: 200px; overflow: hidden; width: auto;" data-initialized="1">
+                            <strong>重复学号汇总</strong><br>
+                            <div  id="result-error_equal"></div>
+                        </div>
+                        <div class="slimScrollBar" style="width: 7px; position: absolute; top: 15px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 185.185185185185px; background: rgb(187, 187, 187);"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(234, 234, 234);">
+                        </div>
+                    </div>
+                 </div>
+            </div>
+            <!-- END Portlet PORTLET-->
+        </div>
+        <div class="col-md-6 ">
+            <!-- BEGIN Portlet PORTLET-->
+            <div class="portlet box green">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <i class="fa fa-gift"></i>导入失败学生的学号汇总
+                    </div>
+
+                </div>
+                <div class="portlet-body">
+                    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><div class="scroller" style="height: 200px; overflow: hidden; width: auto;" data-initialized="1">
+                        <strong>导入失败学号汇总</strong><br>
+                        <div  id="result-error-write"></div>
+                    </div><div class="slimScrollBar" style="width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 185.185185185185px; background: rgb(187, 187, 187);"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; opacity: 0.2; z-index: 90; right: 1px; background: rgb(234, 234, 234);"></div></div>
+                </div>
+            </div>
+            <!-- END Portlet PORTLET-->
+        </div>
+    </div>
+</block>
+<block name="bottom">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            ExcelImport.init();
+        });
+    </script>
+</block>
+
+
+<!-- <div class="form-group">
+                <label class="control-label col-md-3 col-sm-10" for="file_id">文件名&nbsp;&nbsp;</label>
+                <div class="col-md-6 col-sm-10">
+                    <div class="hy-upload display-none" data-field="file_id" style="display: block;">
+                        <div class="row" style="width:260px;">
+                            <div class="col-xs-6">
+                                <div class="b-upload__hint">请先选择文件</div>
+                                <div class="js-files b-upload__files"></div>
+                            </div><div class="col-xs-6">
+                            <div class="btn blue btn-small js-fileapi-wrapper js-browse btn-select">
+                            <span>选择</span>
+                            <input type="file" name="filedata" accept="undefined">
+                            <input type="hidden" name="file_id">
+                        </div>
+                                <div class="js-upload btn purple btn-small btn-upload" aria-disabled="disabled" style="display: none;">
+                                    <span>上传</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>-->

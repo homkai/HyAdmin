@@ -1,0 +1,79 @@
+<extend name="Common@HyFrame:frameset" />
+<block name="title">国际教育学院后台&nbsp;<small>简洁、流畅、安全、自适应移动设备</small></block>
+<block name="breadcrumb">
+    <ul class="page-breadcrumb">
+        <li><i class="fa fa-home"></i> <a href="__ROOT__">首页</a> <i class="fa fa-angle-right"></i></li>
+        <li><a href="javascript:;">数据归档</a></li>
+    </ul>
+</block>
+
+<block name="main">
+    <div class="row basic-con-content">
+        <div class="portlet  portlet-sortable light gray-cararra">
+
+            <div class="portlet-body" >
+                <table class=" table table-hover table-bordered" >
+                    <tr class="info">
+                        <td>
+                            毕业学生信息归档 <div id="studentall" style="display:inline"></div>
+                            <a class="btn blue-madison pull-right submit" style="width:94px;" data-target="#allstudent" data-toggle="modal">
+                                归档</a>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- modal -->
+
+    <div id="allstudent" class="modal fade " tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="form-horizontal" novalidate="novalidate">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                        <h4 class="caption">
+                            <i class="fa font-green-sharp fa-fw fa-edit"></i>
+						<span class="caption-subject font-green-sharp bold" >
+							学生归档-归档整个年级学生信息
+						</span>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-inner" data-always-visible="1" data-rail-visible1="1">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-10">请选择年级：
+                                </label>
+                                <div class="col-md-6 col-sm-10">
+                                    <div class="select">
+                                        <select class="form-control" name="class_id" id="class_id" title="请选择年级：">
+                                            <foreach name="grade" key="k" item="v">
+                                                <option value="{$v}">{$v}级</option>
+                                            </foreach>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" name="fault" data-dismiss="modal" class="btn default">取消</button>
+                        <button type="button" id="delallclass" name="delallclass" class="btn green">确认归档</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</block>
+<block name="bottom">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            SqlExport.init();
+        });
+    </script>
+</block>
+
